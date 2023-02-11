@@ -12,5 +12,8 @@ def multisearch(request):
 def player_stats(request, region, player_name):
     return render(request, 'lolstats/player_stats.html', {})
 
-def player(request):
+def player_live(request, region, player_name):
+    return render(request, 'lolstats/player_live.html', {})
+
+def view_404(request, exception=None):
     return redirect('main')

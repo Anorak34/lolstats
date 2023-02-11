@@ -20,3 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('lolstats.urls')),
 ]
+
+handler404 = 'lolstats.views.view_404'
