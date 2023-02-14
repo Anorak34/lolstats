@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from .helpers import gather_data, get_puuid
 
 def main(request):
     return render(request, 'lolstats/main.html', {})
