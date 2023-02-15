@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from .helpers import gather_data, get_puuid
+from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 def main(request):
     return render(request, 'lolstats/main.html', {})
 
 def champ_stats(request):
+    # Maybe not do
     return render(request, 'lolstats/champ_stats.html', {})
 
 def multisearch(request):
