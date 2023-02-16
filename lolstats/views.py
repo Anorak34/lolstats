@@ -19,7 +19,17 @@ def player(request):
     return redirect('player_stats', region, player_name)
 
 def player_stats(request, region, player_name):
-    return render(request, 'lolstats/player_stats.html', {})
+    if region not in regions:
+        return redirect('main')
+    if not get_summoner(player_name, region):
+        return redirect('main')
+    
+    player_data, match_history, summoner_info, account_stats = gather_data(player_name, region, 1)
+
+    for queue in account_stats:
+        queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
+        
+    return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
     return render(request, 'lolstats/player_live.html', {})
