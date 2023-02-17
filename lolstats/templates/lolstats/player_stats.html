@@ -22,7 +22,11 @@
                             <p class="h6">UNRANKED</p>
                         {% else %}
                             {% for queue in account_stats %}
-                            <p class="h6">{{queue.tier}} {{queue.rank}} {{queue.leaguePoints}}LP</p>
+                                {% if queue.tier == 'CHALLENGER' or queue.tier == 'MASTER' or queue.tier == 'GRANDMASTER' %}
+                                    <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"></span> {{queue.leaguePoints}}LP</p>
+                                {% else %}
+                                    <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"> {{queue.rank}}</span> {{queue.leaguePoints}}LP</p>
+                                {% endif %}
                             {% endfor %}
                         {% endif %}
                     </div>
@@ -40,7 +44,7 @@
                             <p class="h6">W/L 0-0 WINRATE 0%</p>
                         {% else %}
                             {% for queue in account_stats %}
-                            <p class="h6">W/L {{queue.wins}}-{{queue.losses}} WINRATE {{queue.winrate|floatformat:1}}%</p>
+                            <p class="h6">W/L <span class="win">{{queue.wins}}</span>-<span class="loss">{{queue.losses}}</span> WINRATE <span class="winrate">{{queue.winrate|floatformat:1}}%</span></p>
                             {% endfor %}
                         {% endif %}
                     </div>
@@ -61,4 +65,31 @@
             </div>
           </div>
         </div>
+        <p id="test"></p>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let wrtags = document.getElementsByClassName('winrate');
+                for (let i = 0; i < wrtags.length; i++)
+                {
+                    let wr = parseInt(wrtags[i].innerHTML);
+                    if (wr >= 50)
+                    {
+                        wrtags[i].classList.add("win"); 
+                    }
+                    else
+                    {
+                        wrtags[i].classList.add("loss");
+                    }
+                }
+                let tiertags = document.getElementsByClassName('tier');
+                let ranktags = document.getElementsByClassName('rank');
+                for (let i = 0; i < tiertags.length; i++)
+                {
+                    let rank = tiertags[i].innerHTML;
+                    document.getElementById('test').innerHTML = rank;
+                    tiertags[i].classList.add(rank); 
+                    ranktags[i].classList.add(rank);
+                }
+            });
+        </script>
 {% endblock %}

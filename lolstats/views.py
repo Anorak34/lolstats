@@ -28,7 +28,8 @@ def player_stats(request, region, player_name):
 
     for queue in account_stats:
         queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
-        
+    summoner_info['region'] = region
+    
     return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
