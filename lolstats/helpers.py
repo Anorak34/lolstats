@@ -168,10 +168,7 @@ def gather_data(summoner_name, region, match_count, queue_id = None):
         data['time'].append(player_data['timePlayed'])
         data['queueid'].append(player_data['queueId'])
 
-    player_data = pd.DataFrame(data)
-    player_data['win'] = player_data['win'].astype(int)
-
-    return player_data, match_history, summoner_info, account_stats
+    return data, match_history, summoner_info, account_stats
 
 
 def get_live_game(summoner_name, region):

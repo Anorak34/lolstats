@@ -65,7 +65,6 @@
             </div>
           </div>
         </div>
-        <p id="test"></p>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 let wrtags = document.getElementsByClassName('winrate');
@@ -86,7 +85,6 @@
                 for (let i = 0; i < tiertags.length; i++)
                 {
                     let rank = tiertags[i].innerHTML;
-                    document.getElementById('test').innerHTML = rank;
                     tiertags[i].classList.add(rank); 
                     ranktags[i].classList.add(rank);
                 }
