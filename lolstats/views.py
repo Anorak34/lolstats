@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import numpy as np
 import pandas as pd
 from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
@@ -33,7 +34,7 @@ def player_stats(request, region, player_name):
         return redirect('main')
     
     # Run helper function to gather needed data
-    data, match_history, summoner_info, account_stats = gather_data(player_name, region, 1)
+    data, match_history, summoner_info, account_stats = gather_data(player_name, region, 5)
 
     # Add winrate to account stats
     for queue in account_stats:
@@ -44,7 +45,9 @@ def player_stats(request, region, player_name):
     player_data = pd.DataFrame(data)
     player_data['win'] = player_data['win'].astype(int)
     # create a count column
-    player_data['count'] = 1 
+    player_data['count'] = 1
+    # Convert game time to minutes
+    player_data['time'] = player_data['time'].div(60)
 
     # Make data frame for champ stats
     champ_df = player_data.groupby('champion').agg({'kills': 'mean', 'deaths': 'mean', 'assists': 'mean', 'win': 'mean', 'count': 'sum'})
@@ -55,7 +58,33 @@ def player_stats(request, region, player_name):
     # Create winrate column
     champ_df['win_rate'] = round(champ_df['win'] * 100, 1)
     # Sort by count
-    champ_df = champ_df.sort_values('count', ascending=False) 
+    champ_df = champ_df.sort_values('count', ascending=False)
+
+    # Player stats dataframe containing sum, average, average per min and average kda
+    cols = ['kills', 'deaths', 'assists', 'minions', 'vision', 'time']
+    cols2 = ['kills', 'deaths', 'assists', 'minions', 'vision']
+    player_stats_df = player_data[cols].agg(['sum','mean']).rename({'sum':'Total','mean':'Average'})
+    player_stats_df.loc['Per min'] = player_stats_df.loc['Average'][cols2] / player_stats_df.loc['Average']['time']
+    player_stats_df['kda'] = np.nan
+    player_stats_df['kda']['Average'] = (player_stats_df['kills']['Average'] + player_stats_df['assists']['Average']) / player_stats_df['deaths']['Average']
+    player_stats_df = round(player_stats_df, 2)
+
+    # Data frame for winrate and record per queue .groupby('queueid').value_counts(['win'])
+    queue_df = player_data[['queueid', 'win']]
+    queue_df['loss'] = queue_df['win'].apply(lambda x: 1 if x == 0 else 0)
+    queue_df = queue_df.groupby('queueid', as_index=False).sum()
+    queue_df['winrate'] = queue_df['win'] / (queue_df['win'] + queue_df['loss'])
+    
+    # Dict for overall winrate
+    global_winrate = {
+        'win':queue_df['win'].sum(),
+        'loss':queue_df['loss'].sum(),
+        'winrate':(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum()))
+    }
+
+    print(queue_df)
+    print(global_winrate)
+
     
     return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 

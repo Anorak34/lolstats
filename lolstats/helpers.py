@@ -198,4 +198,4 @@ def get_live_game(summoner_name, region):
 
 # IMPROVEMENTS:
 # Implement rate limit error handling into functions that call riot api
-# Implement multithreading to send requests at once and improve loading times
+# Implement multithreading/celery to send requests at once and improve loading times
