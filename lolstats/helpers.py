@@ -31,7 +31,7 @@ def get_summoner(summoner_name, region):
         return None
 
 
-def get_match_ids(puuid, region, match_count, queue_id = None):
+def get_match_ids(puuid, region, match_count, start = 0, queue_id = None):
     """Look up match ids from player puuid"""
 
     # Set routing value from inputed region
@@ -41,9 +41,9 @@ def get_match_ids(puuid, region, match_count, queue_id = None):
     try:
         api_key = os.environ.get("API_KEY")
         if not queue_id:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={str(match_count)}&api_key={api_key}"
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={str(match_count)}&api_key={api_key}"
         else:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start=0&count={str(match_count)}&api_key={api_key}"
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start={start}&count={str(match_count)}&api_key={api_key}"
         response = requests.get(url)
         response.raise_for_status()
     except requests.RequestException:
@@ -121,7 +121,7 @@ def get_account_stats(id, region):
 
 
 
-def gather_data(summoner_name, region, match_count, queue_id = None):
+def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
     """Gather data we need. Return game data to display match history, data frame with player data for player stats and account info for header"""
 
     # Get data needed for functions and return
@@ -133,7 +133,7 @@ def gather_data(summoner_name, region, match_count, queue_id = None):
         'summonerLevel':summoner['summonerLevel']
     }
     account_stats = get_account_stats(summoner['id'], region)
-    match_ids = get_match_ids(puuid, region, match_count, queue_id)
+    match_ids = get_match_ids(puuid, region, match_count, start, queue_id)
 
     # Initialise list for data on games that will be displayed 
     match_history = []

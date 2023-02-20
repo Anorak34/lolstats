@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 import numpy as np
 import pandas as pd
 from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
@@ -24,19 +25,65 @@ def player(request):
 
 def player_stats(request, region, player_name):
 
-    # TODO: at end empty cache and store data from here in session cache then add contintional when visiting the page to check if data from searched player is in cache.
-    # If yes, then append new data to existing data and use that (use search query to make sure that the user wants more data and is not just revisiing the page)
-
     # Ensure region and summoner name are valid
     if region not in regions:
+        messages.error(request, "ERROR: Invalid Region")
         return redirect('main')
     if not get_summoner(player_name, region):
+        messages.error(request, "ERROR: Summoner not found")
         return redirect('main')
     
-    # Run helper function to gather needed data
-    data, match_history, summoner_info, account_stats = gather_data(player_name, region, 5)
+    if request.GET.get('load_more'):
+        try:
+            matches = int(request.GET.get('load_more')) + 2
+        except:
+            messages.error(request, "ERROR: Invalid url")
+            return redirect(request.path)
 
-    # Add winrate to account stats
+    if player_name in request.session:
+        # Check if searched player is stored in session
+        data = request.session[player_name]['data']
+        match_history = request.session[player_name]['match_history']
+        summoner_info = request.session[player_name]['summoner_info']
+        account_stats = request.session[player_name]['account_stats']
+        # If load more is in url and less matches than needed are stored load more matches and add to current data set otherwise display the amount we want.
+        if request.GET.get('load_more'):
+            if len(match_history) < matches:
+                matches -= len(match_history)
+                data2, match_history2, _, _ = gather_data(player_name, region, matches, len(match_history))
+                match_history = match_history + match_history2
+                for key in data:
+                    data[key] = data[key] + data2[key]
+                request.session[player_name]['data'] = data
+                request.session[player_name]['match_history'] = match_history
+            elif len(match_history) > matches:
+                matches = len(match_history) - matches
+                match_history = match_history[:-matches]
+        else:
+            if len(match_history) > 2:
+                matches = len(match_history) - 2
+                match_history = match_history[:-matches]
+    else:
+        # Run helper function to gather needed data and store in session using base of 10 but if load more is in url load x more than 10
+        if not request.GET.get('load_more'):
+            data, match_history, summoner_info, account_stats = gather_data(player_name, region, 2)
+            request.session[player_name] = {
+                'data':data,
+                'match_history':match_history,
+                'summoner_info':summoner_info,
+                'account_stats':account_stats,
+            }
+        else:
+            data, match_history, summoner_info, account_stats = gather_data(player_name, region, matches)
+            request.session[player_name] = {
+                'data':data,
+                'match_history':match_history,
+                'summoner_info':summoner_info,
+                'account_stats':account_stats,
+            }
+
+
+    # Add winrate to account stats and region to summoner info
     for queue in account_stats:
         queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
     summoner_info['region'] = region
@@ -81,15 +128,12 @@ def player_stats(request, region, player_name):
         'loss':queue_df['loss'].sum(),
         'winrate':(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum()))
     }
-
-    print(queue_df)
-    print(global_winrate)
-
-    
+ 
     return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
     return render(request, 'lolstats/player_live.html', {})
 
 def view_404(request, exception=None):
+    messages.error(request, "ERROR: 404 Not found")
     return redirect('main')

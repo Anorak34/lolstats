@@ -55,14 +55,20 @@
         </div>
         <div class="row align-items-md-stretch">
           <div class="col-md-4">
-            <div class="h-100 p-3 rounded-3" style="background-color: #2c2f33;">
+            <div class="p-3 rounded-3" style="background-color: #2c2f33;">
                 {{ player_data }}
             </div>
           </div>
-          <div class="col-md-8">
-            <div class="h-100 p-3 rounded-3" style="background-color: #2c2f33;">
+          <div class="col-md-8 text-center">
+            <div class="p-3 rounded-3" style="background-color: #2c2f33;">
                 {{ match_history }}
             </div>
+            <form method="get" action="{{ request.path }}">
+                <input type="hidden" name="load_more" id="load_more" value="{{ match_history|length }}">
+                <button type="submit" class="btn btn-outline-light mt-2">
+                    Load More
+                </button>
+              </form>
           </div>
         </div>
         <script>
