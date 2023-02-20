@@ -6,6 +6,8 @@ from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
+games = 2; 
+
 def main(request):
     return render(request, 'lolstats/main.html', {})
 
@@ -35,7 +37,7 @@ def player_stats(request, region, player_name):
     
     if request.GET.get('load_more'):
         try:
-            matches = int(request.GET.get('load_more')) + 2
+            matches = int(request.GET.get('load_more')) + games
         except:
             messages.error(request, "ERROR: Invalid url")
             return redirect(request.path)
@@ -60,13 +62,13 @@ def player_stats(request, region, player_name):
                 matches = len(match_history) - matches
                 match_history = match_history[:-matches]
         else:
-            if len(match_history) > 2:
-                matches = len(match_history) - 2
+            if len(match_history) > games:
+                matches = len(match_history) - games
                 match_history = match_history[:-matches]
     else:
         # Run helper function to gather needed data and store in session using base of 10 but if load more is in url load x more than 10
         if not request.GET.get('load_more'):
-            data, match_history, summoner_info, account_stats = gather_data(player_name, region, 2)
+            data, match_history, summoner_info, account_stats = gather_data(player_name, region, games)
             request.session[player_name] = {
                 'data':data,
                 'match_history':match_history,
@@ -126,7 +128,8 @@ def player_stats(request, region, player_name):
     global_winrate = {
         'win':queue_df['win'].sum(),
         'loss':queue_df['loss'].sum(),
-        'winrate':(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum()))
+        'winrate':(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())),
+        'number_of_games':len(data['champion'])
     }
  
     return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
