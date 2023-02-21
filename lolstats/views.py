@@ -93,21 +93,17 @@ def player_stats(request, region, player_name):
     # Create data frame for player data to more easily generate stats
     player_data = pd.DataFrame(data)
     player_data['win'] = player_data['win'].astype(int)
-    # create a count column
     player_data['count'] = 1
-    # Convert game time to minutes
     player_data['time'] = player_data['time'].div(60)
 
-    # Make data frame for champ stats
+    # Make data frame for champ stats with kda and winrate column, ordered by count
     champ_df = player_data.groupby('champion').agg({'kills': 'mean', 'deaths': 'mean', 'assists': 'mean', 'win': 'mean', 'count': 'sum'})
-    # Reset in the index so we can still use the "champion" column
     champ_df.reset_index(inplace=True)
-    # create a kda column
     champ_df['kda'] = round((champ_df['kills'] + champ_df['assists']) / champ_df['deaths'], 2)
-    # Create winrate column
-    champ_df['win_rate'] = round(champ_df['win'] * 100, 1)
-    # Sort by count
+    champ_df['winrate'] = round(champ_df['win'] * 100, 1)
     champ_df = champ_df.sort_values('count', ascending=False)
+    champ_df = champ_df.drop(columns=['kills', 'assists', 'deaths', 'win'])
+    champ_df['winrate'] = champ_df['winrate'].astype(str) + '%'
 
     # Player stats dataframe containing sum, average, average per min and average kda
     cols = ['kills', 'deaths', 'assists', 'minions', 'vision', 'time']
@@ -117,25 +113,56 @@ def player_stats(request, region, player_name):
     player_stats_df['kda'] = np.nan
     player_stats_df['kda']['Average'] = (player_stats_df['kills']['Average'] + player_stats_df['assists']['Average']) / player_stats_df['deaths']['Average']
     player_stats_df = round(player_stats_df, 2)
+    player_stats_df = player_stats_df.transpose()
 
-    # Data frame for winrate and record per queue .groupby('queueid').value_counts(['win'])
+    # Data frame for winrate and record per queue
     queue_df = player_data[['queueid', 'win']]
     queue_df['loss'] = queue_df['win'].apply(lambda x: 1 if x == 0 else 0)
     queue_df = queue_df.groupby('queueid', as_index=False).sum()
-    queue_df['winrate'] = queue_df['win'] / (queue_df['win'] + queue_df['loss'])
-    
+    queue_df['winrate'] = queue_df['win'] / (queue_df['win'] + queue_df['loss'])*100
+    queue_df['winrate'] = round(queue_df['winrate'], 2)
+    queue_df['winrate'] = queue_df['winrate'].astype(str) + '%'
+    queue_df = queue_df.rename(columns={"queueid": "queue"})
+
     # Dict for overall winrate
     global_winrate = {
         'win':queue_df['win'].sum(),
         'loss':queue_df['loss'].sum(),
-        'winrate':(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())),
+        'winrate':str(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())*100) + '%',
         'number_of_games':len(data['champion'])
     }
+    
+    queue_df = queue_df.astype(str)
+    champ_df = champ_df.astype(str)
+    player_stats_df = player_stats_df.astype(str)
  
-    return render(request, 'lolstats/player_stats.html', {'player_data':player_data, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
+    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
-    return render(request, 'lolstats/player_live.html', {})
+
+    # Ensure region and summoner name are valid
+    if region not in regions:
+        messages.error(request, "ERROR: Invalid Region")
+        return redirect('main')
+    if not get_summoner(player_name, region):
+        messages.error(request, "ERROR: Summoner not found")
+        return redirect('main')
+    
+    if player_name in request.session:
+        # Check if searched player is stored in session
+        summoner_info = request.session[player_name]['summoner_info']
+        account_stats = request.session[player_name]['account_stats']
+    else:
+        summoner_info = get_summoner(player_name, region)
+        account_stats = account_stats = get_account_stats(summoner_info['id'], region)
+    
+    live_game_data = get_live_game(player_name, region)
+
+    if not live_game_data:
+        live_game_data = 'PLAYER NOT IN GAME'
+    
+    return render(request, 'lolstats/player_live.html', {'live_game_data':live_game_data, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'player_name':player_name})
+
 
 def view_404(request, exception=None):
     messages.error(request, "ERROR: 404 Not found")

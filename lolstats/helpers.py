@@ -1,7 +1,6 @@
 import os
 import requests
 import urllib.parse
-import pandas as pd
 
 # Dictionaries containing routing values for RIOT API
 platform_routing_values = {'BR':'BR1', 'EUNE':'EUN1', 'EUW':'EUW1', 'JP':'JP1', 'KR':'KR', 'LAN':'LA1', 'LAS':'LA2', 'NA':'NA1', 'OCE':'OC1', 'TR':'TR1', 'RU':'RU'}

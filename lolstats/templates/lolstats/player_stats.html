@@ -1,4 +1,5 @@
 {% extends 'lolstats/layout.html' %}
+{% load zip %}
 
 {% block title %}
     Player stats
@@ -6,16 +7,16 @@
 
 {% block content %}
     <div class="container py-4">
-        <div class="p-3 mb-4 rounded-3" style="background-color: #2c2f33;">
+        <div class="p-3 rounded-3 overflow-hidden" style="background-color: #2c2f33;">
           <div class="container-fluid">
             <p class="h1">{{summoner_info.name}}  <span class="badge rounded-pill bg-secondary" style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
-            <div class="row mb-auto text-left">
-                <div class="col-md-2 ">
-                    <div class="rounded-pill border w-100 h-100">
-                        
+            <div class="row mb-auto text-left align-items-center">
+                <div class="col-md-2" style="max-height: 120px; max-width: 120px;">
+                    <div class="rounded-5 border border-3 w-auto h-auto overflow-hidden">
+                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{summoner_info.profileIconId}}.png" alt="summoner icon" class="img-fluid">
                     </div>
                 </div>
-                <div class="col-md-10 ">
+                <div class="col-md-10">
                   <div class="row">
                     <div class="col-md-auto">
                         {% if not account_stats %}
@@ -53,15 +54,107 @@
               </div>
           </div>
         </div>
+        <nav class="nav">
+            <a class="nav-link active text-light-emphasis" aria-current="page" href="{{ request.path }}">Overview</a>
+            <a class="nav-link text-muted" href="{{ request.path }}live/">Live Game</a>
+        </nav>
         <div class="row align-items-md-stretch">
-          <div class="col-md-4">
-            <div class="p-3 rounded-3" style="background-color: #2c2f33;">
-                {{ player_data }}
+            <div class="col-md-4 text-center">
+                <div class="p-1 rounded-3" style="background-color: #2c2f33;">
+                    <div class="m-1 p-2 border border-secondary-subtle rounded-3">
+                        <h6>{% include './icons/layers.svg' %} CHAMPIONS {% include './icons/layers.svg' %}</h6>
+                        <hr>
+                        <div class="overflow-auto">
+                            <table class="table table-hover table-dark table-striped w-100">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        {% for col in champ_df.columns %}
+                                            <th scope="col">{{ col|upper }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in champ_df.values %}
+                                        <tr>
+                                            <th scope="col">{{forloop.counter}}</th>
+                                            {% for value in row %}
+                                                <td>{{ value }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="m-1 p-2 border border-secondary-subtle rounded-3">
+                        <h6>{% include './icons/bar-chart.svg' %} STATS {% include './icons/bar-chart.svg' %}</h6>
+                        <hr>
+                        <div class="overflow-auto">
+                            <table class="table table-hover table-dark table-striped w-100">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">STAT</th>
+                                        {% for col in player_stats_df.columns %}
+                                            <th scope="col">{{ col|upper }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row, stat in player_stats_df.values|zip:player_stats_df.index %}
+                                        <tr>
+                                            <td>{{ stat|upper }}</td>
+                                            {% for value in row %}
+                                                {% if value == 'nan' %}
+                                                <td> </td>
+                                                {% else %}
+                                                <td>{{ value }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="m-1 p-2 border border-secondary-subtle rounded-3">
+                        <h6>{% include './icons/text-left.svg' %} QUEUES {% include './icons/text-left.svg' %}</h6>
+                        <hr>
+                        <div class="overflow-auto">
+                            <table class="table table-hover table-dark table-striped w-100">
+                                <thead>
+                                    <tr>
+                                        {% for col in queue_df.columns %}
+                                            <th scope="col">{{ col|upper }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in queue_df.values %}
+                                        <tr>
+                                            {% for value in row %}
+                                            {% if forloop.counter == 1 %}
+                                                <td class="queue">{{ value }}</td>
+                                            {% else %}
+                                                <td>{{ value }}</td>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> 
+                    <div>
+                        <p class="h4"><span class="winrate">{{ global_winrate.winrate }}</span> | <span class="win">{{global_winrate.win}}</span> - <span class="loss">{{global_winrate.loss}}</span></p>
+                        <p class="h6">Global Record</p>
+                        <p>Stats based on <span class="h6">{{ global_winrate.number_of_games }}</span> games</p>
+                    </div> 
+                </div>
             </div>
-          </div>
-          <div class="col-md-8 text-center">
+        <div class="col-md-8 text-center">
             <div class="p-3 rounded-3" style="background-color: #2c2f33;">
-                {{ match_history }}
+                match_history
             </div>
             <form method="get" action="{{ request.path }}">
                 <input type="hidden" name="load_more" id="load_more" value="{{ match_history|length }}">
@@ -71,29 +164,8 @@
               </form>
           </div>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                let wrtags = document.getElementsByClassName('winrate');
-                for (let i = 0; i < wrtags.length; i++)
-                {
-                    let wr = parseInt(wrtags[i].innerHTML);
-                    if (wr >= 50)
-                    {
-                        wrtags[i].classList.add("win"); 
-                    }
-                    else
-                    {
-                        wrtags[i].classList.add("loss");
-                    }
-                }
-                let tiertags = document.getElementsByClassName('tier');
-                let ranktags = document.getElementsByClassName('rank');
-                for (let i = 0; i < tiertags.length; i++)
-                {
-                    let rank = tiertags[i].innerHTML;
-                    tiertags[i].classList.add(rank); 
-                    ranktags[i].classList.add(rank);
-                }
-            });
-        </script>
+        {{ queue_ids|json_script:"queue_ids" }}
+        <p id="test"></p>
+        <script src="\static\js\account_colours.js"></script>
+        <script src="\static\js\queue_ids.js"></script>
 {% endblock %}
