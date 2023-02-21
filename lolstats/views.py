@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 import numpy as np
 import pandas as pd
+from time import gmtime, strftime
 from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
@@ -113,6 +114,8 @@ def player_stats(request, region, player_name):
     player_stats_df['kda'] = np.nan
     player_stats_df['kda']['Average'] = (player_stats_df['kills']['Average'] + player_stats_df['assists']['Average']) / player_stats_df['deaths']['Average']
     player_stats_df = round(player_stats_df, 2)
+    player_stats_df['time']['Total'] = strftime("%H:%M:%S", gmtime(player_stats_df['time']['Total'] * 60))
+    player_stats_df['time']['Average'] = strftime("%H:%M:%S", gmtime(player_stats_df['time']['Average'] * 60))
     player_stats_df = player_stats_df.transpose()
 
     # Data frame for winrate and record per queue
@@ -132,10 +135,6 @@ def player_stats(request, region, player_name):
         'number_of_games':len(data['champion'])
     }
     
-    queue_df = queue_df.astype(str)
-    champ_df = champ_df.astype(str)
-    player_stats_df = player_stats_df.astype(str)
- 
     return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
@@ -154,7 +153,7 @@ def player_live(request, region, player_name):
         account_stats = request.session[player_name]['account_stats']
     else:
         summoner_info = get_summoner(player_name, region)
-        account_stats = account_stats = get_account_stats(summoner_info['id'], region)
+        account_stats = get_account_stats(summoner_info['id'], region)
     
     live_game_data = get_live_game(player_name, region)
 
