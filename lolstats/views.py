@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 import numpy as np
 import pandas as pd
+import requests
 from time import gmtime, strftime
-from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
+from .helpers import gather_data, get_live_game, get_summoner, get_account_stats, convert_sum_ids, convert_rune_ids
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
 games = 2; 
+
 
 def main(request):
     return render(request, 'lolstats/main.html', {})
@@ -49,40 +51,47 @@ def player_stats(request, region, player_name):
         match_history = request.session[player_name]['match_history']
         summoner_info = request.session[player_name]['summoner_info']
         account_stats = request.session[player_name]['account_stats']
+        player_history = request.session[player_name]['player_history']
         # If load more is in url and less matches than needed are stored load more matches and add to current data set otherwise display the amount we want.
         if request.GET.get('load_more'):
             if len(match_history) < matches:
                 matches -= len(match_history)
-                data2, match_history2, _, _ = gather_data(player_name, region, matches, len(match_history))
+                data2, match_history2, _, _, player_history2 = gather_data(player_name, region, matches, len(match_history))
                 match_history = match_history + match_history2
+                player_history = player_history + player_history2
                 for key in data:
                     data[key] = data[key] + data2[key]
                 request.session[player_name]['data'] = data
                 request.session[player_name]['match_history'] = match_history
+                request.session[player_name]['player_history'] = player_history
             elif len(match_history) > matches:
                 matches = len(match_history) - matches
                 match_history = match_history[:-matches]
+                player_history = player_history[:-matches]
         else:
             if len(match_history) > games:
                 matches = len(match_history) - games
                 match_history = match_history[:-matches]
+                player_history = player_history[:-matches]
     else:
         # Run helper function to gather needed data and store in session using base of 10 but if load more is in url load x more than 10
         if not request.GET.get('load_more'):
-            data, match_history, summoner_info, account_stats = gather_data(player_name, region, games)
+            data, match_history, summoner_info, account_stats, player_history = gather_data(player_name, region, games)
             request.session[player_name] = {
                 'data':data,
                 'match_history':match_history,
                 'summoner_info':summoner_info,
                 'account_stats':account_stats,
+                'player_history':player_history,
             }
         else:
-            data, match_history, summoner_info, account_stats = gather_data(player_name, region, matches)
+            data, match_history, summoner_info, account_stats, player_history = gather_data(player_name, region, matches)
             request.session[player_name] = {
                 'data':data,
                 'match_history':match_history,
                 'summoner_info':summoner_info,
                 'account_stats':account_stats,
+                'player_history':player_history,
             }
 
 
@@ -131,11 +140,11 @@ def player_stats(request, region, player_name):
     global_winrate = {
         'win':queue_df['win'].sum(),
         'loss':queue_df['loss'].sum(),
-        'winrate':str(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())*100) + '%',
+        'winrate':str(round(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())*100, 2)) + '%',
         'number_of_games':len(data['champion'])
     }
     
-    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
+    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
 
 def player_live(request, region, player_name):
 
@@ -161,6 +170,10 @@ def player_live(request, region, player_name):
         live_game_data = 'PLAYER NOT IN GAME'
     
     return render(request, 'lolstats/player_live.html', {'live_game_data':live_game_data, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'player_name':player_name})
+
+
+def test(request):
+    return render(request, 'lolstats/test.html', {})
 
 
 def view_404(request, exception=None):
