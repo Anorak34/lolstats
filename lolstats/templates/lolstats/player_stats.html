@@ -163,11 +163,11 @@ Player stats
         <div class="col-md-8">
             {% for match, player in match_history|zip:player_history %}
             <div class="h5 text-left">{{player.championName}} - <span class="queue">{{match.info.queueId}}</span></div>
-            <div class="p-3 rounded-3 mb-1" style="background-color: #2c2f33;">
+            <div class="p-3 rounded-3 mb-1m" style="background-color: #2c2f33;">
                 <div class="row align-items-center flex-nowrap overflow-auto">
                     <div class="col-auto">
                         <div class="row align-items-center">
-                            <div class="col-auto gx-2">
+                            <div class="col-auto gx-2" style="width: 58px;">
                                 <div class="row justify-content-center">
                                     {% if player.teamPosition %}
                                     <div class="rounded-3 w-auto h-auto overflow-hidden">
@@ -230,7 +230,7 @@ Player stats
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto mx-1">
+                            <div class="col-auto mx-1" style="width: 84px;">
                                 <div class="row justify-content-center h5">
                                     {{player.kills}}/{{player.deaths}}/{{player.assists}}</div>
                                 <div class="row justify-content-center h6">{{player.challenges.kda|floatformat}} KDA
@@ -324,7 +324,7 @@ Player stats
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto mx-1">
+                            <div class="col-auto mx-1" style="width: 95px;">
                                 <div class="row justify-content-center">
                                     <div class="col-auto h7" style="color:#81e6d9;">
                                         CS: {{player.totalMinionsKilled}}
@@ -351,12 +351,42 @@ Player stats
                     </div>
                     <div class="col-auto">
                         <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="row justify-content-right">p1</div>
-                                <div class="row justify-content-right">p2</div>
-                                <div class="row justify-content-right">p3</div>
-                                <div class="row justify-content-right">p4</div>
-                                <div class="row justify-content-right">p5</div>
+                            <div class="col-auto gx-1" style="max-width: 80px;">
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.0.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.0.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.1.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.1.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.2.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.2.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.3.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.3.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.4.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.4.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                             <div class="col-auto gx-1">
                                 <div class="row justify-content-center">
@@ -454,16 +484,46 @@ Player stats
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto">
-                                <div class="row justify-content-left">p6</div>
-                                <div class="row justify-content-left">p7</div>
-                                <div class="row justify-content-left">p8</div>
-                                <div class="row justify-content-left">p9</div>
-                                <div class="row justify-content-left">p10</div>
+                            <div class="col-auto gx-1" style="max-width: 80px;">
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.5.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.5.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.61.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.6.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.7.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.7.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.8.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.8.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row align-items-center" style="height: 24px;">
+                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.9.summonerName}}/">
+                                        <div class="h7 text-truncate">
+                                            {{match.info.participants.9.summonerName}}
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto mx-1">
+                    <div class="col-auto mx-2">
                         <div class="row justify-content-center">{% include './icons/stopwatch-fill.svg' %}</div>
                         <div class="row justify-content-center h6">{{match.info.gameDuration|time}}</div>
                         <div class="row justify-content-center h7">{{match.info.gameCreation}}</div>

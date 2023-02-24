@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 import numpy as np
 import pandas as pd
-import requests
 from time import gmtime, strftime
 from .helpers import gather_data, get_live_game, get_summoner, get_account_stats, convert_sum_ids, convert_rune_ids
 
@@ -52,6 +51,7 @@ def player_stats(request, region, player_name):
         summoner_info = request.session[player_name]['summoner_info']
         account_stats = request.session[player_name]['account_stats']
         player_history = request.session[player_name]['player_history']
+        
         # If load more is in url and less matches than needed are stored load more matches and add to current data set otherwise display the amount we want.
         if request.GET.get('load_more'):
             if len(match_history) < matches:
@@ -144,7 +144,7 @@ def player_stats(request, region, player_name):
         'number_of_games':len(data['champion'])
     }
     
-    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats})
+    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region})
 
 def player_live(request, region, player_name):
 

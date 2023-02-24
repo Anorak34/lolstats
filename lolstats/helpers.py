@@ -8,76 +8,7 @@ platform_routing_values = {'BR':'BR1', 'EUNE':'EUN1', 'EUW':'EUW1', 'JP':'JP1', 
 regional_routing_values = {'BR':'AMERICAS', 'EUNE':'EUROPE', 'EUW':'EUROPE', 'JP':'ASIA', 'KR':'ASIA', 'LAN':'AMERICAS', 'LAS':'AMERICAS', 'NA':'AMERICAS', 'OCE':'SEA', 'TR':'EUROPE', 'RU':'EUROPE'}
 
 
-def get_summoner(summoner_name, region):
-    """Look up summoner from inputed summoner name. returns ids used for making other api requests in addition to level and icon"""
-
-    # Set routing value from inputed region
-    region = platform_routing_values[region.upper()]
-
-    # Contact API
-    try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote_plus(summoner_name)}?api_key={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    # Parse response
-    try:
-        summoner = response.json()
-        return summoner
-    except (KeyError, TypeError, ValueError):
-        return None
-
-
-def get_match_ids(puuid, region, match_count, start = 0, queue_id = None):
-    """Look up match ids from player puuid"""
-
-    # Set routing value from inputed region
-    region = regional_routing_values[region.upper()]
-
-    # Contact API
-    try:
-        api_key = os.environ.get("API_KEY")
-        if not queue_id:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={str(match_count)}&api_key={api_key}"
-        else:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start={start}&count={str(match_count)}&api_key={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    # Parse response
-    try:
-        match_ids = response.json()
-        return match_ids
-    except (KeyError, TypeError, ValueError):
-        return None
-
-
-def get_match_data(match_id, region):
-    """Look up match data from match id"""
-
-    # Set routing value from inputed region
-    region = regional_routing_values[region.upper()]
-
-    # Contact API
-    try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    # Parse response
-    try:
-        match_data = response.json()
-        return match_data
-    except (KeyError, TypeError, ValueError):
-        return None
+# DATA MANIPULATION FUNCTIONS:
 
 
 def find_player_data(match_data, puuid):
@@ -222,6 +153,80 @@ def convert_gameCreation(match_history):
     return match_history
 
 
+# RIOT API DATA GATHERING FUNCTIONS:
+
+
+def get_summoner(summoner_name, region):
+    """Look up summoner from inputed summoner name. returns ids used for making other api requests in addition to level and icon"""
+
+    # Set routing value from inputed region
+    region = platform_routing_values[region.upper()]
+
+    # Contact API
+    try:
+        api_key = os.environ.get("API_KEY")
+        url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote_plus(summoner_name)}?api_key={api_key}"
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    # Parse response
+    try:
+        summoner = response.json()
+        return summoner
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def get_match_ids(puuid, region, match_count, start = 0, queue_id = None):
+    """Look up match ids from player puuid"""
+
+    # Set routing value from inputed region
+    region = regional_routing_values[region.upper()]
+
+    # Contact API
+    try:
+        api_key = os.environ.get("API_KEY")
+        if not queue_id:
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={str(match_count)}&api_key={api_key}"
+        else:
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start={start}&count={str(match_count)}&api_key={api_key}"
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    # Parse response
+    try:
+        match_ids = response.json()
+        return match_ids
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def get_match_data(match_id, region):
+    """Look up match data from match id"""
+
+    # Set routing value from inputed region
+    region = regional_routing_values[region.upper()]
+
+    # Contact API
+    try:
+        api_key = os.environ.get("API_KEY")
+        url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    # Parse response
+    try:
+        match_data = response.json()
+        return match_data
+    except (KeyError, TypeError, ValueError):
+        return None
+
 
 def get_account_stats(id, region):
     """Look up account stats from inputed summoner id. Returns data about account rank"""
@@ -246,6 +251,32 @@ def get_account_stats(id, region):
         return None
 
 
+def get_live_game(summoner_name, region):
+    """Look up live game from inputed summoner name"""
+
+    id = get_summoner(summoner_name, region)['id']
+
+    # Set routing value from inputed region
+    region = platform_routing_values[region.upper()]
+
+    # Contact API
+    try:
+        api_key = os.environ.get("API_KEY")
+        url = f"https://{region}.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{id}?api_key={api_key}"
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    # Parse response
+    try:
+        live_game_data = response.json()
+        return live_game_data
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+# CONSOLIDATION FUNCTION:
 
 
 def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
@@ -302,31 +333,6 @@ def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
     match_history, player_history = convert_rune_ids(match_history, player_history)
     match_history = convert_gameCreation(match_history)
     return data, match_history, summoner_info, account_stats, player_history
-
-
-def get_live_game(summoner_name, region):
-    """Look up live game from inputed summoner name"""
-
-    id = get_summoner(summoner_name, region)['id']
-
-    # Set routing value from inputed region
-    region = platform_routing_values[region.upper()]
-
-    # Contact API
-    try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{id}?api_key={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    # Parse response
-    try:
-        live_game_data = response.json()
-        return live_game_data
-    except (KeyError, TypeError, ValueError):
-        return None
 
 
 # IMPROVEMENTS:
