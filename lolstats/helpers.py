@@ -153,6 +153,17 @@ def convert_gameCreation(match_history):
     return match_history
 
 
+def add_team_gold(match_history):
+    for match in match_history:
+        match['info']['teams'][0]['objectives']['gold'] = 0
+        match['info']['teams'][1]['objectives']['gold'] = 0
+        for participant in match['info']['participants'][:5]:
+            match['info']['teams'][0]['objectives']['gold'] += participant['goldEarned']
+        for participant in match['info']['participants'][5:]:
+            match['info']['teams'][1]['objectives']['gold'] += participant['goldEarned']
+    return match_history
+
+
 # RIOT API DATA GATHERING FUNCTIONS:
 
 
@@ -332,6 +343,8 @@ def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
     match_history, player_history = convert_sum_ids(match_history, player_history)
     match_history, player_history = convert_rune_ids(match_history, player_history)
     match_history = convert_gameCreation(match_history)
+    match_history = add_team_gold(match_history)
+    
     return data, match_history, summoner_info, account_stats, player_history
 
 

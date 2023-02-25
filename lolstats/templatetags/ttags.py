@@ -27,5 +27,14 @@ def time(a):
 def template_range(a, b):
   return range(a, b)
 
+@register.filter(name='split')
+def split_participants(list, section):
+  # Splits participants list in half, returns 1st or 2nd based on section, if section is not 1 or 2 returns entire list
+  if section == 1:
+    return list[:5]
+  elif section == 2:
+    return list[5:]
+  else:
+    return list
   
   

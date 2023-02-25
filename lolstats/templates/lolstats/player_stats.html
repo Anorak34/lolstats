@@ -162,8 +162,16 @@ Player stats
         </div>
         <div class="col-md-8">
             {% for match, player in match_history|zip:player_history %}
-            <div class="h5 text-left">{{player.championName}} - <span class="queue">{{match.info.queueId}}</span></div>
-            <div class="p-3 rounded-3 mb-1m" style="background-color: #2c2f33;">
+            {% if player.win %}
+            <div class="h5 text-left">{{player.championName}} - <span class="queue">{{match.info.queueId}}</span> :
+                <span class="win">WIN</span>
+            </div>
+            {% else %}
+            <div class="h5 text-left">{{player.championName}} - <span class="queue">{{match.info.queueId}}</span> :
+                <span class="loss">LOSS</span>
+            </div>
+            {% endif %}
+            <div class="p-3 rounded-3 mb-1" style="background-color: #2c2f33;">
                 <div class="row align-items-center flex-nowrap overflow-auto">
                     <div class="col-auto">
                         <div class="row align-items-center">
@@ -193,7 +201,7 @@ Player stats
                                                 alt="summoner icon" class="img-fluid" width="30px" height="30px">
                                             {% else %}
                                             <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
+                                                alt="summoner icon" class="img-fluid" width="30px" height="30px">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -206,7 +214,7 @@ Player stats
                                                 alt="summoner icon" class="img-fluid" width="30px" height="30px">
                                             {% else %}
                                             <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
+                                                alt="summoner icon" class="img-fluid" width="30px" height="30px">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -217,7 +225,7 @@ Player stats
                                     <div class="col-auto">
                                         <div class="rounded-2 mb-1 overflow-hidden">
                                             <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{player.keystone}}"
-                                                alt="summoner icon" class="img-fluid" width="35px" height="35px">
+                                                alt="perk icon" class="img-fluid" width="35px" height="35px">
                                         </div>
                                     </div>
                                 </div>
@@ -225,7 +233,7 @@ Player stats
                                     <div class="col-auto">
                                         <div class="rounded-2 mb-1 overflow-hidden">
                                             <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{player.substyle}}"
-                                                alt="summoner icon" class="img-fluid" width="20px" height="20px">
+                                                alt="perk icon" class="img-fluid" width="20px" height="20px">
                                         </div>
                                     </div>
                                 </div>
@@ -324,7 +332,7 @@ Player stats
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto mx-1" style="width: 95px;">
+                            <div class="col-auto mx-1" style="width: 100px;">
                                 <div class="row justify-content-center">
                                     <div class="col-auto h7" style="color:#81e6d9;">
                                         CS: {{player.totalMinionsKilled}}
@@ -342,8 +350,7 @@ Player stats
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-auto h7" style="color:#b78787;">
-                                        KP:
-                                        {{player.kills|add:player.assists|percent:match.info.teams.0.objectives.champion.kills|floatformat}}%
+                                        KP: {{player.kills|add:player.assists|percent:match.info.teams.0.objectives.champion.kills|floatformat}}%
                                     </div>
                                 </div>
                             </div>
@@ -352,75 +359,29 @@ Player stats
                     <div class="col-auto">
                         <div class="row align-items-center">
                             <div class="col-auto gx-1" style="max-width: 80px;">
+                                {% for participant in match.info.participants|split:1 %}
                                 <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.0.summonerName}}/">
+                                    <a class="text-reset text-decoration-none"
+                                        href="/player/{{region}}/{{participant.summonerName}}/">
                                         <div class="h7 text-truncate">
-                                            {{match.info.participants.0.summonerName}}
+                                            {{participant.summonerName}}
                                         </div>
                                     </a>
                                 </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.1.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.1.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.2.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.2.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.3.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.3.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.4.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.4.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
+                                {% endfor %}
                             </div>
                             <div class="col-auto gx-1">
+                                {% for participant in match.info.participants|split:1 %}
                                 <div class="row justify-content-center">
                                     <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.0.championId}}.png"
+                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png"
                                             alt="role icon" class="img-fluid" width="20px" height="20px">
                                     </div>
                                 </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.1.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.2.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.3.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.4.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                             <div class="col-auto gx-1">
+                                {% if player.teamPosition %}
                                 <div class="row justify-content-center">
                                     <div class="rounded-3 w-auto h-auto overflow-hidden">
                                         <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top-blue-hover.png"
@@ -451,82 +412,295 @@ Player stats
                                             alt="role icon" class="img-fluid" width="20" height="20">
                                     </div>
                                 </div>
+                                {% else %}
+                                {% for i in 0|range:5 %}
+                                <div class="row justify-content-center">
+                                    <div class="rounded-3 w-auto h-auto overflow-hidden">
+                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-fill-disabled.png"
+                                            alt="role icon" class="img-fluid" width="20" height="20">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
                             </div>
                             <div class="col-auto gx-1">
+                                {% for participant in match.info.participants|split:2 %}
                                 <div class="row justify-content-center">
                                     <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.5.championId}}.png"
+                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png"
                                             alt="role icon" class="img-fluid" width="20px" height="20px">
                                     </div>
                                 </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.6.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.7.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.8.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="overflow-hidden">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{match.info.participants.9.championId}}.png"
-                                            alt="role icon" class="img-fluid" width="20px" height="20px">
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                             <div class="col-auto gx-1" style="max-width: 80px;">
+                                {% for participant in match.info.participants|split:2 %}
                                 <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.5.summonerName}}/">
+                                    <a class="text-reset text-decoration-none"
+                                        href="/player/{{region}}/{{participant.summonerName}}/">
                                         <div class="h7 text-truncate">
-                                            {{match.info.participants.5.summonerName}}
+                                            {{participant.summonerName}}
                                         </div>
                                     </a>
                                 </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.61.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.6.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.7.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.7.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.8.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.8.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="row align-items-center" style="height: 24px;">
-                                    <a class="text-reset text-decoration-none" href="/player/{{region}}/{{match.info.participants.9.summonerName}}/">
-                                        <div class="h7 text-truncate">
-                                            {{match.info.participants.9.summonerName}}
-                                        </div>
-                                    </a>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto mx-2">
+                    <div class="col-auto mx-1">
                         <div class="row justify-content-center">{% include './icons/stopwatch-fill.svg' %}</div>
                         <div class="row justify-content-center h6">{{match.info.gameDuration|time}}</div>
                         <div class="row justify-content-center h7">{{match.info.gameCreation}}</div>
+                        <div class="row justify-content-center w-75 mt-1 mx-1">
+                            <button type="button" class="btn btn-outline-light btn-sm"
+                                style="--bs-btn-padding-y: 0rem; --bs-btn-padding-x: 0rem;" data-bs-toggle="collapse"
+                                data-bs-target="#collapseGame{{ forloop.counter }}" aria-expanded="false"
+                                aria-controls="collapseGame{{ forloop.counter }}">
+                                {% include './icons/chevron-compact-down.svg' %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse" id="collapseGame{{ forloop.counter }}">
+                <div class="card card-body p-3 rounded-3 mb-1 overflow-auto justify-content-center" style="background-color: #2c2f33;">
+                    <div class="mt-3">
+                        <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
+                            <thead>
+                                <tr>
+                                    {% if match.info.teams.0.win %}
+                                    <th class="override-left" scope="col">Ally Team - <span class="win">VICTORY</span</th>
+                                    {% else %}
+                                    <th class="override-left" scope="col">Ally Team</th>
+                                    {% endif %}
+                                    <th scope="col">LVL</th>
+                                    <th scope="col">K</th>
+                                    <th scope="col">D</th>
+                                    <th scope="col">A</th>
+                                    <th scope="col">CS</th>
+                                    <th scope="col">VS</th>
+                                    <th scope="col">GOLD</th>
+                                    <th scope="col">DMG CHAMP</th>
+                                    <th scope="col">DMG OBJ</th>
+                                    <th scope="col">DMG TAKEN</th>
+                                    <th scope="col">KP</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                {% for participant in match.info.participants|split:1 %}
+                                <tr>
+                                    <td>
+                                        <div class="row align-items-center justify-content-left px-2 flex-nowrap">
+                                            <div class="col-auto gx-1">
+                                                {% if player.teamPosition %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                {% if participant.summoner1 %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                {% endif %}
+                                                {% if participant.summoner2 %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
+                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
+                                            </div>
+                                            <div class="col-auto gx-2 override-left" style="width: 80px;">
+                                                <div class="h7 text-truncate">{{participant.summonerName}}</div>
+                                                <div class="h8 text-truncate">{{participant.championName}}</div>
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item0 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item1 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item2 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item3 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item4 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item5 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{participant.champLevel}}</td>
+                                    <td>{{participant.kills}}</td>
+                                    <td>{{participant.deaths}}</td>
+                                    <td>{{participant.assists}}</td>
+                                    <td>{{participant.totalMinionsKilled}}</td>
+                                    <td>{{participant.visionScore}}</td>
+                                    <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
+                                    <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
+                                    <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
+                                    <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
+                                    <td>{{participant.kills|add:participant.assists|percent:match.info.teams.0.objectives.champion.kills|floatformat}}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mb-3 h6">
+                        <div class="mb-1">
+                            ALLIED TEAM: <span class="win">{{match.info.teams.0.objectives.champion.kills}}</span> KILLS | <span class="win">{{match.info.teams.0.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="win">{{match.info.teams.0.objectives.tower.kills}}</span> TOWERS | <span class="win">{{match.info.teams.0.objectives.dragon.kills}}</span> DRAGONS | <span class="win">{{match.info.teams.0.objectives.baron.kills}}</span> BARONS
+                        </div>
+                        <div>
+                            ENEMY TEAM: <span class="loss">{{match.info.teams.1.objectives.champion.kills}}</span> KILLS | <span class="loss">{{match.info.teams.1.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="loss">{{match.info.teams.1.objectives.tower.kills}}</span> TOWERS | <span class="loss">{{match.info.teams.1.objectives.dragon.kills}}</span> DRAGONS | <span class="loss">{{match.info.teams.1.objectives.baron.kills}}</span> BARONS
+                        </div>
+                    </div>
+                    <div>
+                        <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
+                            <thead>
+                                <tr>
+                                    {% if match.info.teams.1.win %}
+                                    <th class="override-left" scope="col">Enemy Team - <span class="loss">VICTORY</span></th>
+                                    {% else %}
+                                    <th class="override-left" scope="col">Enemy Team</th>
+                                    {% endif %}
+                                    <th scope="col">LVL</th>
+                                    <th scope="col">K</th>
+                                    <th scope="col">D</th>
+                                    <th scope="col">A</th>
+                                    <th scope="col">CS</th>
+                                    <th scope="col">VS</th>
+                                    <th scope="col">GOLD</th>
+                                    <th scope="col">DMG CHAMP</th>
+                                    <th scope="col">DMG OBJ</th>
+                                    <th scope="col">DMG TAKEN</th>
+                                    <th scope="col">KP</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                {% for participant in match.info.participants|split:2 %}
+                                <tr>
+                                    <td>
+                                        <div class="row align-items-center justify-content-left px-2 flex-nowrap">
+                                            <div class="col-auto gx-1">
+                                                {% if player.teamPosition %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                {% if participant.summoner1 %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                {% endif %}
+                                                {% if participant.summoner2 %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-1">
+                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
+                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
+                                            </div>
+                                            <div class="col-auto gx-2 override-left" style="width: 80px;">
+                                                <div class="h7 text-truncate">{{participant.summonerName}}</div>
+                                                <div class="h8 text-truncate">{{participant.championName}}</div>
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item0 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item1 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item2 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item3 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item4 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto gx-0">
+                                                {% if participant.item5 != 0 %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);"></div>
+                                                {% else %}
+                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{participant.champLevel}}</td>
+                                    <td>{{participant.kills}}</td>
+                                    <td>{{participant.deaths}}</td>
+                                    <td>{{participant.assists}}</td>
+                                    <td>{{participant.totalMinionsKilled}}</td>
+                                    <td>{{participant.visionScore}}</td>
+                                    <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
+                                    <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
+                                    <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
+                                    <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
+                                    <td>{{participant.kills|add:participant.assists|percent:match.info.teams.1.objectives.champion.kills|floatformat}}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -540,7 +714,6 @@ Player stats
         </div>
     </div>
     {{ queue_ids|json_script:"queue_ids" }}
-    <p id="test"></p>
     <script src="\static\js\account_colours.js"></script>
     <script src="\static\js\queue_ids.js"></script>
     {% endblock %}

@@ -7,7 +7,7 @@ from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
-games = 2; 
+games = 10; 
 
 
 def main(request):

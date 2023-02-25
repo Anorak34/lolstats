@@ -83,3 +83,19 @@ body::-webkit-scrollbar, body::-webkit-scrollbar-track {
     font-weight: 600;
 }
 
+.h8 {
+    font-size: x-small;
+    font-weight: 400;
+}
+
+.bg-cover {
+    background-size: cover;
+}
+
+.bg-center {
+    background-position: 50%;
+}
+
+.override-left {
+    text-align: left !important;
+  }
