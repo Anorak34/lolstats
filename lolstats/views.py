@@ -14,10 +14,10 @@ def main(request):
     return render(request, 'lolstats/main.html', {})
 
 def multisearch(request):
-    summoner_info_list = []
-    account_stats_list = []
-
     if request.method == "POST":
+        summoner_info_list = []
+        account_stats_list = []
+
         player_names = request.POST.get('player_names')
         region = request.POST.get('region')
 
@@ -36,13 +36,17 @@ def multisearch(request):
             if not summoner_info:
                 messages.error(request, f"ERROR: {player} not found in {region} server")
                 continue
-            
             account_stats = get_account_stats(summoner_info['id'], region)
-
             summoner_info_list.append(summoner_info)
             account_stats_list.append(account_stats)
+        
+        if not summoner_info_list:
+            messages.error(request, f"ERROR: No players found")
+            return redirect('multisearch')
 
-    return render(request, 'lolstats/multisearch.html', {'summoner_info_list':summoner_info_list, 'account_stats_list':account_stats_list})
+        return render(request, 'lolstats/multisearched.html', {'summoner_info_list':summoner_info_list, 'account_stats_list':account_stats_list, 'region':region})
+    else:
+        return render(request, 'lolstats/multisearch.html', {})
 
 def player(request):
 
