@@ -3,28 +3,61 @@ from django.contrib import messages
 import numpy as np
 import pandas as pd
 from time import gmtime, strftime
-from .helpers import gather_data, get_live_game, get_summoner, get_account_stats, convert_sum_ids, convert_rune_ids
+from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
-games = 10; 
+games = 5; 
 
 
 def main(request):
     return render(request, 'lolstats/main.html', {})
 
-def champ_stats(request):
-    # Maybe not do
-    return render(request, 'lolstats/champ_stats.html', {})
-
 def multisearch(request):
-    return render(request, 'lolstats/multisearch.html', {})
+    summoner_info_list = []
+    account_stats_list = []
+
+    if request.method == "POST":
+        player_names = request.POST.get('player_names')
+        region = request.POST.get('region')
+
+        if region not in regions:
+            messages.error(request, "ERROR: Invalid Region")
+            return redirect('multisearch')
+        if not player_names:
+            messages.error(request, "ERROR: Must enter summoner")
+            return redirect('multisearch')
+        
+        player_names = player_names.split(',')
+
+        for player in player_names:
+            summoner_info = get_summoner(player, region)
+
+            if not summoner_info:
+                messages.error(request, f"ERROR: {player} not found in {region} server")
+                continue
+            
+            account_stats = get_account_stats(summoner_info['id'], region)
+
+            summoner_info_list.append(summoner_info)
+            account_stats_list.append(account_stats)
+
+    return render(request, 'lolstats/multisearch.html', {'summoner_info_list':summoner_info_list, 'account_stats_list':account_stats_list})
 
 def player(request):
 
     # Get user input and direct to player stats page
     player_name = request.GET.get('player_name')
     region = request.GET.get('region')
+
+    # Ensure region and summoner name are valid
+    if region not in regions:
+        messages.error(request, "ERROR: Invalid Region")
+        return redirect('main')
+    if not player_name:
+        messages.error(request, "ERROR: Must enter summoner")
+        return redirect('main')
+
     return redirect('player_stats', region, player_name)
 
 def player_stats(request, region, player_name):
@@ -164,10 +197,12 @@ def player_live(request, region, player_name):
         summoner_info = get_summoner(player_name, region)
         account_stats = get_account_stats(summoner_info['id'], region)
     
+    # Add winrate to account stats and region to summoner info
+    for queue in account_stats:
+        queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
+    summoner_info['region'] = region
+    
     live_game_data = get_live_game(player_name, region)
-
-    if not live_game_data:
-        live_game_data = 'PLAYER NOT IN GAME'
     
     return render(request, 'lolstats/player_live.html', {'live_game_data':live_game_data, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'player_name':player_name})
 

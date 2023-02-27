@@ -1,65 +1,219 @@
 {% extends 'lolstats/layout.html' %}
+{% load ttags %}
 
 {% block title %}
-    Player Live
+Player Live
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="p-3 rounded-3" style="background-color: #2c2f33;">
-      <div class="container-fluid">
-        <p class="h1">{{summoner_info.name}}  <span class="badge rounded-pill bg-secondary" style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
-        <div class="row mb-auto text-left">
-            <div class="col-md-2 ">
-                <div class="rounded-pill border w-100 h-100">
-                    
+<div class="container-xxl py-4">
+    <div class="p-3 rounded-3">
+        <div class="container-fluid">
+            <p class="h1">{{summoner_info.name}} <span class="badge rounded-pill bg-secondary"
+                    style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
+            <div class="row mb-auto text-left align-items-center flex-nowrap">
+                <div class="col-md-2" style="max-height: 120px; max-width: 120px;">
+                    <div class="rounded-5 border border-3 w-auto h-auto overflow-hidden">
+                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{summoner_info.profileIconId}}.png"
+                            alt="summoner icon" class="img-fluid">
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-10 ">
-              <div class="row">
-                <div class="col-md-auto">
-                    {% if not account_stats %}
-                        <p class="h6">UNRANKED</p>
-                    {% else %}
-                        {% for queue in account_stats %}
-                            {% if queue.tier == 'CHALLENGER' or queue.tier == 'MASTER' or queue.tier == 'GRANDMASTER' %}
-                                <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"></span> {{queue.leaguePoints}}LP</p>
+                <div class="col-md-10">
+                    <div class="row flex-nowrap">
+                        <div class="col-auto">
+                            {% if not account_stats %}
+                            <p class="h6">UNRANKED</p>
                             {% else %}
-                                <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"> {{queue.rank}}</span> {{queue.leaguePoints}}LP</p>
+                            {% for queue in account_stats %}
+                            {% if queue.tier == 'CHALLENGER' or queue.tier == 'MASTER' or queue.tier == 'GRANDMASTER' %}
+                            <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"></span>
+                                {{queue.leaguePoints}}LP</p>
+                            {% else %}
+                            <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank">
+                                    {{queue.rank}}</span> {{queue.leaguePoints}}LP</p>
                             {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="col-auto">
+                            {% if not account_stats %}
+                            <p class="h6">RANKED_SOLO_5x5</p>
+                            {% else %}
+                            {% for queue in account_stats %}
+                            <p class="h6">{{queue.queueType}}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="col-auto">
+                            {% if not account_stats %}
+                            <p class="h6">W/L 0-0 WINRATE 0%</p>
+                            {% else %}
+                            {% for queue in account_stats %}
+                            <p class="h6">W/L <span class="win">{{queue.wins}}</span>-<span
+                                    class="loss">{{queue.losses}}</span> WINRATE <span
+                                    class="winrate">{{queue.winrate|floatformat:1}}%</span></p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-auto">
-                    {% if not account_stats %}
-                        <p class="h6">RANKED_SOLO_5x5</p>
-                    {% else %}
-                        {% for queue in account_stats %}
-                        <p class="h6">{{queue.queueType}}</p>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="col-md-auto">
-                    {% if not account_stats %}
-                        <p class="h6">W/L 0-0 WINRATE 0%</p>
-                    {% else %}
-                        {% for queue in account_stats %}
-                        <p class="h6">W/L <span class="win">{{queue.wins}}</span>-<span class="loss">{{queue.losses}}</span> WINRATE <span class="winrate">{{queue.winrate|floatformat:1}}%</span></p>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-              </div>
             </div>
-          </div>
-      </div>
+        </div>
     </div>
     <nav class="nav">
         <a class="nav-link text-muted" href="/player/{{ region }}/{{ player_name }}/">Overview</a>
         <a class="nav-link active text-light-emphasis" aria-current="page" href="{{ request.path }}">Live Game</a>
     </nav>
-    <div class="container p-3 mb-4 text-center">
-        {{ live_game_data }}
+    <div class="container p-3 mt-5">
+        {% if not live_game_data %}
+        <p class="display-2 text-center mt-5">PLAYER NOT IN GAME</p>
+        {% else %}
+        <div class="h3">{{live_game_data.gameMode}} - <span id="timer"></span></div>
+        <table class="table table-hover table-dark table-striped table-borderless w-100 text-center">
+            <thead>
+                <tr>
+                    <th class="h3 text-info" scope="col">BLUE TEAM</th>
+                    <th class="h3">VS</th>
+                    <th class="h3 text-danger" scope="col">RED TEAM</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for blue, red in live_game_data.participants|splitZip %}
+                <tr>
+                    <td>
+                        <div class="row align-items-center justify-content-start px-2 flex-nowrap">
+                            <div class="col-auto gx-1">
+                                <div class="bg-cover bg-center rounded-circle"
+                                    style="width: 60px; height: 60px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{blue.championId}}.png&quot;);">
+                                </div>
+                            </div>
+                            <div class="col-auto gx-1">
+                                {% if blue.summoner1 %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{blue.summoner1}}.png&quot;);">
+                                </div>
+                                {% else %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);">
+                                </div>
+                                {% endif %}
+                                {% if blue.summoner2 %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{blue.summoner2}}.png&quot;);">
+                                </div>
+                                {% else %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);">
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-auto gx-1">
+                                <div class="bg-cover bg-center rounded-2"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{blue.keystone}}&quot;);">
+                                </div>
+                                <div class="bg-cover bg-center rounded-2"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{blue.substyle}}&quot;);">
+                                </div>
+                            </div>
+                            <div class="col-auto gx-2 override-left">
+                                <div class="h6 text-truncate">{{blue.summonerName}}</div>
+                                <div class="h7 text-truncate">{{blue.championName}}</div>
+                            </div>
+                            {% if red.bot %}
+                            <div class="col-auto gx-5 align-items-center">
+                                <div class="rounded-2">
+                                    {% include './icons/robot.svg' %}
+                                </div>
+                            </div> 
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td></td>
+                    <td>
+                        <div class="row align-items-center justify-content-end px-2 flex-nowrap">
+                            {% if red.bot %}
+                            <div class="col-auto gx-5 align-items-center">
+                                <div class="rounded-2">
+                                    {% include './icons/robot.svg' %}
+                                </div>
+                            </div> 
+                            {% endif %}
+                            <div class="col-auto gx-2 override-right">
+                                <div class="h6 text-truncate">{{red.summonerName}}</div>
+                                <div class="h7 text-truncate">{{red.championName}}</div>
+                            </div>
+                            <div class="col-auto gx-1">
+                                <div class="bg-cover bg-center rounded-2"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{red.keystone}}&quot;);">
+                                </div>
+                                <div class="bg-cover bg-center rounded-2"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{red.substyle}}&quot;);">
+                                </div>
+                            </div>
+                            <div class="col-auto gx-1">
+                                {% if red.summoner1 %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{red.summoner1}}.png&quot;);">
+                                </div>
+                                {% else %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);">
+                                </div>
+                                {% endif %}
+                                {% if red.summoner2 %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{red.summoner2}}.png&quot;);">
+                                </div>
+                                {% else %}
+                                <div class="bg-cover bg-center rounded-1"
+                                    style="width: 25px; height: 25px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);">
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-auto gx-1">
+                                <div class="bg-cover bg-center rounded-circle"
+                                    style="width: 60px; height: 60px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{red.championId}}.png&quot;);">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>
+                        <div class="row align-items-center justify-content-start px-2 flex-nowrap">
+                            {% for champ in live_game_data.bannedChampions|split:1 %}
+                            <div class="col-auto gx-3">
+                                <div class="border border-3 rounded-circle border-info overflow-hidden">
+                                    <div class="bg-cover bg-center ban-img"
+                                        style="width: 45px; height: 45px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{champ.championId}}.png&quot;);">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="h5"><div class="mt-2">-BANS-</div></td>
+                    <td>
+                        <div class="row align-items-center justify-content-end px-2 flex-nowrap">
+                            {% for champ in live_game_data.bannedChampions|split:2 %}
+                            <div class="col-auto gx-3">
+                                <div class="border border-3 rounded-circle border-danger overflow-hidden">
+                                    <div class="bg-cover bg-center ban-img"
+                                        style="width: 45px; height: 45px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{champ.championId}}.png&quot;);">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
     </div>
 </div>
+{{ live_game_data.gameLength|json_script:"gameLength" }}
+<script src="\static\js\timer.js"></script>
 <script src="\static\js\account_colours.js"></script>
 {% endblock %}

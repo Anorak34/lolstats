@@ -98,4 +98,12 @@ body::-webkit-scrollbar, body::-webkit-scrollbar-track {
 
 .override-left {
     text-align: left !important;
-  }
+}
+
+.override-right {
+    text-align: right !important;
+}
+
+.ban-img {
+    filter: grayscale(100%);
+}

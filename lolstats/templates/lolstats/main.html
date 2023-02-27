@@ -1,7 +1,7 @@
 {% extends 'lolstats/layout.html' %}
 
 {% block title %}
-    Main
+Main
 {% endblock %}
 
 {% block content %}
@@ -9,18 +9,19 @@
     {% include './icons/code-slash.svg' %}
     <h1 class="display-5 fw-bold">LOL STATS</h1>
     <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">Search for a Summoner {% include './icons/search.svg' %}</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET">
-            <select class="form-select mx-auto w-auto" id="region" name="region">
-                {% for region in regions %}
+        <p class="lead mb-4">Search for a Summoner {% include './icons/search.svg' %}</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET">
+                <select class="form-select mx-auto w-auto" id="region" name="region">
+                    {% for region in regions %}
                     <option value="{{ region }}">{{ region }}</option>
-                {% endfor %}
-            </select>
-            <input autocomplete="off" class="form-control me-2" id="player_name" name="player_name" placeholder="Search Players" required type="text">
-        <button class="btn btn-outline-light" type="submit">Search</button>
-    </form>
-      </div>
+                    {% endfor %}
+                </select>
+                <input autocomplete="off" class="form-control me-2" id="player_name" name="player_name"
+                    placeholder="Search Players" required type="text">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

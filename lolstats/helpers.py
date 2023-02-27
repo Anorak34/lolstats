@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import urllib.parse
 import datetime
@@ -164,6 +165,47 @@ def add_team_gold(match_history):
     return match_history
 
 
+def convert_live_runes_and_summs(data):
+    '''Convert summoner spells, runes and champion id for live data'''
+
+    with open('lolstats/static/json/rune_dd.json', 'r', encoding='utf-8') as file:
+        rune_dd = json.load(file)
+
+    with open('lolstats/static/json/summoner_dd.json', 'r', encoding='utf-8') as file:
+        sum_dd = json.load(file)['data']
+
+    with open('lolstats/static/json/champion_dd.json', 'r', encoding='utf-8') as file:
+        champ_dd = json.load(file)['data']
+
+    rune_styles = {
+        8000:'7201_precision.png',
+        8100:'7200_domination.png',
+        8200:'7202_sorcery.png',
+        8300:'7203_whimsy.png',
+        8400:'7204_resolve.png'
+    }
+
+    for participant in data['participants']:
+        for key in rune_styles:
+            if int(participant['perks']['perkSubStyle']) == key:
+                participant['substyle'] = rune_styles[key]
+            
+        for rune in rune_dd:
+            if int(rune['id']) == int(participant['perks']['perkIds'][0]):
+                participant['keystone'] = rune['iconPath'].replace('/lol-game-data/assets/v1/perk-images/Styles/', '').lower()
+
+        for sum in sum_dd:
+            if int(sum_dd[sum]['key']) == int(participant['spell1Id']):
+                participant['summoner1'] = sum_dd[sum]['id']
+            if int(sum_dd[sum]['key']) == int(participant['spell2Id']):
+                participant['summoner2'] = sum_dd[sum]['id']
+        
+        for champ in champ_dd:
+            if int(champ_dd[champ]['key']) == int(participant['championId']):
+                participant['championName'] = champ_dd[champ]['id']
+
+    return data
+
 # RIOT API DATA GATHERING FUNCTIONS:
 
 
@@ -263,7 +305,7 @@ def get_account_stats(id, region):
 
 
 def get_live_game(summoner_name, region):
-    """Look up live game from inputed summoner name"""
+    """Look up live game from inputed summoner name and convert rune and summonerids"""
 
     id = get_summoner(summoner_name, region)['id']
 
@@ -282,9 +324,12 @@ def get_live_game(summoner_name, region):
     # Parse response
     try:
         live_game_data = response.json()
-        return live_game_data
+        
     except (KeyError, TypeError, ValueError):
         return None
+    
+    live_game_data = convert_live_runes_and_summs(live_game_data)
+    return live_game_data
 
 
 # CONSOLIDATION FUNCTION:

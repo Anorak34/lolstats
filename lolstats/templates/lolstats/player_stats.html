@@ -6,12 +6,12 @@ Player stats
 {% endblock %}
 
 {% block content %}
-<div class="container-xxl py-4 overflow-auto">
-    <div class="p-3 rounded-3 overflow-hidden">
+<div class="container-xxl py-4">
+    <div class="p-3 rounded-3">
         <div class="container-fluid">
             <p class="h1">{{summoner_info.name}} <span class="badge rounded-pill bg-secondary"
                     style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
-            <div class="row mb-auto text-left align-items-center">
+            <div class="row mb-auto text-left align-items-center flex-nowrap">
                 <div class="col-md-2" style="max-height: 120px; max-width: 120px;">
                     <div class="rounded-5 border border-3 w-auto h-auto overflow-hidden">
                         <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{summoner_info.profileIconId}}.png"
@@ -19,8 +19,8 @@ Player stats
                     </div>
                 </div>
                 <div class="col-md-10">
-                    <div class="row">
-                        <div class="col-md-auto">
+                    <div class="row flex-nowrap">
+                        <div class="col-auto">
                             {% if not account_stats %}
                             <p class="h6">UNRANKED</p>
                             {% else %}
@@ -35,7 +35,7 @@ Player stats
                             {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="col-md-auto">
+                        <div class="col-auto">
                             {% if not account_stats %}
                             <p class="h6">RANKED_SOLO_5x5</p>
                             {% else %}
@@ -44,7 +44,7 @@ Player stats
                             {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="col-md-auto">
+                        <div class="col-auto">
                             {% if not account_stats %}
                             <p class="h6">W/L 0-0 WINRATE 0%</p>
                             {% else %}

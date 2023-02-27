@@ -9,7 +9,10 @@ def zip_lists(a, b):
 @register.filter(name='percent')
 def percent(a, b):
   # Divides a by be then multiplies by 100
-  return (int(a)/int(b))*100
+  if b != 0:
+    return (int(a)/int(b))*100
+  else:
+    return 0
 
 @register.filter(name='div')
 def div(a, b):
@@ -36,5 +39,12 @@ def split_participants(list, section):
     return list[5:]
   else:
     return list
+  
+@register.filter(name='splitZip')
+def split_zip_participants(list):
+  # Splits participants list in half, and zips them
+  blue_team = list[:5]
+  red_team = list[5:]
+  return zip(blue_team, red_team)
   
   
