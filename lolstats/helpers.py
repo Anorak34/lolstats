@@ -3,6 +3,9 @@ import json
 import requests
 import urllib.parse
 import datetime
+import time
+import asyncio
+import aiohttp
 
 # Dictionaries containing routing values for RIOT API
 platform_routing_values = {'BR':'BR1', 'EUNE':'EUN1', 'EUW':'EUW1', 'JP':'JP1', 'KR':'KR', 'LAN':'LA1', 'LAS':'LA2', 'NA':'NA1', 'OCE':'OC1', 'TR':'TR1', 'RU':'RU'}
@@ -15,10 +18,6 @@ regional_routing_values = {'BR':'AMERICAS', 'EUNE':'EUROPE', 'EUW':'EUROPE', 'JP
 def find_player_data(match_data, puuid):
     """Find player data from within match data"""
 
-    # Game participants puuids are in metadata
-    # One will match the puuid we aready have for the player
-    # Participamt data is in the same order as the participants in metadata
-    # So we can use the index in metadata to get the players data
     participants = match_data['metadata']['participants']
     player_index = participants.index(puuid)
     player_data = match_data['info']['participants'][player_index]
@@ -94,8 +93,8 @@ def convert_summs(sum_dd, data):
 def convert_sum_ids(match_history, player_history):
     """Convert summoner spell id to name for match and player history"""
 
-    response = requests.get('http://ddragon.leagueoflegends.com/cdn/11.10.1/data/en_US/summoner.json')
-    sum_dd = response.json()['data']
+    with open('lolstats/static/json/summoner_dd.json', 'r', encoding='utf-8') as file:
+        sum_dd = json.load(file)['data']
 
     for match_data in match_history:
         participants = match_data['info']['participants']
@@ -133,8 +132,8 @@ def convert_runes(rune_dd, data):
 def convert_rune_ids(match_history, player_history):
     """Convert rune id of keystone substyle to icon path"""
 
-    response = requests.get('https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perks.json')
-    rune_dd = response.json()
+    with open('lolstats/static/json/rune_dd.json', 'r', encoding='utf-8') as file:
+        rune_dd = json.load(file)
 
     for match_data in match_history:
         participants = match_data['info']['participants']
@@ -206,6 +205,7 @@ def convert_live_runes_and_summs(data):
 
     return data
 
+
 # RIOT API DATA GATHERING FUNCTIONS:
 
 
@@ -217,9 +217,26 @@ def get_summoner(summoner_name, region):
 
     # Contact API
     try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote_plus(summoner_name)}?api_key={api_key}"
-        response = requests.get(url)
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote_plus(summoner_name)}?api_key={api_key}"
+            response = requests.get(url)
+
+            if response.status_code != 429:
+                break
+            if not response.headers['Retry-After']:
+                if attempts < 8:
+                    time.sleep(2 ** attempts)
+                    print(f"sleeping for {2 ** attempts} seconds")
+                    attempts += 1
+                else:
+                    time.sleep(2 ** 7)
+                    print(f"sleeping for {2 ** 7} seconds")
+            else:
+                time.sleep(int(response.headers['Retry-After']))
+                print(f"sleeping for {response.headers['Retry-After']} seconds")
+        
         response.raise_for_status()
     except requests.RequestException:
         return None
@@ -240,12 +257,29 @@ def get_match_ids(puuid, region, match_count, start = 0, queue_id = None):
 
     # Contact API
     try:
-        api_key = os.environ.get("API_KEY")
-        if not queue_id:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={str(match_count)}&api_key={api_key}"
-        else:
-            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start={start}&count={str(match_count)}&api_key={api_key}"
-        response = requests.get(url)
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            if not queue_id:
+                url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={str(match_count)}&api_key={api_key}"
+            else:
+                url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue={str(queue_id)}&start={start}&count={str(match_count)}&api_key={api_key}"
+            response = requests.get(url)
+
+            if response.status_code != 429:
+                break
+            if not response.headers['Retry-After']:
+                if attempts < 8:
+                    time.sleep(2 ** attempts)
+                    print(f"sleeping for {2 ** attempts} seconds")
+                    attempts += 1
+                else:
+                    time.sleep(2 ** 7)
+                    print(f"sleeping for {2 ** 7} seconds")
+            else:
+                time.sleep(int(response.headers['Retry-After']))
+                print(f"sleeping for {response.headers['Retry-After']} seconds")
+        
         response.raise_for_status()
     except requests.RequestException:
         return None
@@ -266,9 +300,26 @@ def get_match_data(match_id, region):
 
     # Contact API
     try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
-        response = requests.get(url)
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
+            response = requests.get(url)
+
+            if response.status_code != 429:
+                break
+            if not response.headers['Retry-After']:
+                if attempts < 8:
+                    time.sleep(2 ** attempts)
+                    print(f"sleeping for {2 ** attempts} seconds")
+                    attempts += 1
+                else:
+                    time.sleep(2 ** 7)
+                    print(f"sleeping for {2 ** 7} seconds")
+            else:
+                time.sleep(int(response.headers['Retry-After']))
+                print(f"sleeping for {response.headers['Retry-After']} seconds")
+        
         response.raise_for_status()
     except requests.RequestException:
         return None
@@ -289,9 +340,26 @@ def get_account_stats(id, region):
 
     # Contact API
     try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{id}?api_key={api_key}"
-        response = requests.get(url)
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{id}?api_key={api_key}"
+            response = requests.get(url)
+
+            if response.status_code != 429:
+                break
+            if not response.headers['Retry-After']:
+                if attempts < 8:
+                    time.sleep(2 ** attempts)
+                    print(f"sleeping for {2 ** attempts} seconds")
+                    attempts += 1
+                else:
+                    time.sleep(2 ** 7)
+                    print(f"sleeping for {2 ** 7} seconds")
+            else:
+                time.sleep(int(response.headers['Retry-After']))
+                print(f"sleeping for {response.headers['Retry-After']} seconds")
+        
         response.raise_for_status()
     except requests.RequestException:
         return None
@@ -299,6 +367,8 @@ def get_account_stats(id, region):
     # Parse response
     try:
         account = response.json()
+        for queue in account:
+            queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
         return account
     except (KeyError, TypeError, ValueError):
         return None
@@ -314,9 +384,26 @@ def get_live_game(summoner_name, region):
 
     # Contact API
     try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://{region}.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{id}?api_key={api_key}"
-        response = requests.get(url)
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{id}?api_key={api_key}"
+            response = requests.get(url)
+
+            if response.status_code != 429:
+                break
+            if not response.headers['Retry-After']:
+                if attempts < 8:
+                    time.sleep(2 ** attempts)
+                    print(f"sleeping for {2 ** attempts} seconds")
+                    attempts += 1
+                else:
+                    time.sleep(2 ** 7)
+                    print(f"sleeping for {2 ** 7} seconds")
+            else:
+                time.sleep(int(response.headers['Retry-After']))
+                print(f"sleeping for {response.headers['Retry-After']} seconds")
+
         response.raise_for_status()
     except requests.RequestException:
         return None
@@ -324,13 +411,9 @@ def get_live_game(summoner_name, region):
     # Parse response
     try:
         live_game_data = response.json()
-        
+        return convert_live_runes_and_summs(live_game_data)
     except (KeyError, TypeError, ValueError):
         return None
-    
-    live_game_data = convert_live_runes_and_summs(live_game_data)
-    return live_game_data
-
 
 # CONSOLIDATION FUNCTION:
 
@@ -372,6 +455,115 @@ def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
 
         # Add match data to match history
         match_history.append(match_data)
+        player_history.append(player_data)
+
+        # Add player data to data set
+        data['champion'].append(player_data['championName'])
+        data['kills'].append(player_data['kills'])
+        data['deaths'].append(player_data['deaths'])
+        data['assists'].append(player_data['assists'])
+        data['win'].append(player_data['win'])
+        data['minions'].append(player_data['totalMinionsKilled'])
+        data['vision'].append(player_data['visionScore'])
+        data['time'].append(player_data['timePlayed'])
+        data['queueid'].append(player_data['queueId'])
+
+    match_history, player_history = convert_sum_ids(match_history, player_history)
+    match_history, player_history = convert_rune_ids(match_history, player_history)
+    match_history = convert_gameCreation(match_history)
+    match_history = add_team_gold(match_history)
+    
+    return data, match_history, summoner_info, account_stats, player_history
+
+
+# RIOT API DATA GATHERING FUNCTIONS, ASYNC VERSION:
+
+
+async def get_match_data_async(match_id, region, session):
+    """Look up match data from match id"""
+
+    # Set routing value from inputed region
+    region = regional_routing_values[region.upper()]
+
+    try:
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
+            
+            async with session.get(url) as response:
+                if response.status != 429:
+                    match_data = await response.json()
+                    break
+                if not response.headers['Retry-After']:
+                    if attempts < 8:
+                        time.sleep(2 ** attempts)
+                        print(f"sleeping for {2 ** attempts} seconds")
+                        attempts += 1
+                    else:
+                        time.sleep(2 ** 7)
+                        print(f"sleeping for {2 ** 7} seconds")
+                else:
+                    time.sleep(int(response.headers['Retry-After']))
+                    print(f"sleeping for {response.headers['Retry-After']} seconds")
+    except Exception:
+        return None
+    else:
+        return match_data
+    
+
+async def get_async_tasks(data_set, region, function):
+    tasks = []
+    async with aiohttp.ClientSession() as session:
+        for data in data_set:
+            task = asyncio.ensure_future(function(data, region, session))
+            tasks.append(task)
+        responses = await asyncio.gather(*tasks)
+    return responses
+
+
+# ASYNC CONSOLIDATION FUNCTION:
+
+def gather_data_async(summoner_name, region, match_count, start = 0, queue_id = None):
+    """Gather data we need. Return game data to display match history, data frame with player data for player stats and account info for header"""
+
+    # Get data needed for functions and return
+    summoner = get_summoner(summoner_name, region)
+    puuid = summoner['puuid']
+    summoner_info = {
+        'profileIconId':summoner['profileIconId'],
+        'name':summoner['name'],
+        'summonerLevel':summoner['summonerLevel']
+    }
+    account_stats = get_account_stats(summoner['id'], region)
+    match_ids = get_match_ids(puuid, region, match_count, start, queue_id)
+
+    # Initialise lists for data on games that will be displayed 
+    player_history = []
+    # Initialise dictionary to store relevant player data for analysis
+    data = {
+        'champion': [],
+        'kills': [],
+        'deaths': [],
+        'assists': [],
+        'win': [],
+        'minions':[],
+        'vision':[],
+        'time':[],
+        'queueid':[]
+    }
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    future = asyncio.ensure_future(get_async_tasks(match_ids, region, get_match_data_async))
+    loop.run_until_complete(future)
+    match_history = future.result()
+
+    for match_data in match_history:
+
+        player_data = find_player_data(match_data, puuid)
+        match_data = sort_match_data(match_data, puuid)
+
         player_history.append(player_data)
 
         # Add player data to data set

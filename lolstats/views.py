@@ -7,7 +7,7 @@ from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
-games = 5; 
+games = 20; 
 
 
 def main(request):
@@ -131,12 +131,6 @@ def player_stats(request, region, player_name):
                 'player_history':player_history,
             }
 
-
-    # Add winrate to account stats and region to summoner info
-    for queue in account_stats:
-        queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
-    summoner_info['region'] = region
-
     # Create data frame for player data to more easily generate stats
     player_data = pd.DataFrame(data)
     player_data['win'] = player_data['win'].astype(int)
@@ -200,11 +194,6 @@ def player_live(request, region, player_name):
     else:
         summoner_info = get_summoner(player_name, region)
         account_stats = get_account_stats(summoner_info['id'], region)
-    
-    # Add winrate to account stats and region to summoner info
-    for queue in account_stats:
-        queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
-    summoner_info['region'] = region
     
     live_game_data = get_live_game(player_name, region)
     
