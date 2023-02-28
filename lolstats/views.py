@@ -3,11 +3,11 @@ from django.contrib import messages
 import numpy as np
 import pandas as pd
 from time import gmtime, strftime
-from .helpers import gather_data, get_live_game, get_summoner, get_account_stats
+from .helpers import get_live_game, get_summoner, get_account_stats, gather_data_async, get_multi_players_sync, get_multi_accounts_sync
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
-games = 20; 
+games = 10; 
 
 
 def main(request):
@@ -15,9 +15,6 @@ def main(request):
 
 def multisearch(request):
     if request.method == "POST":
-        summoner_info_list = []
-        account_stats_list = []
-
         player_names = request.POST.get('player_names')
         region = request.POST.get('region')
 
@@ -29,17 +26,18 @@ def multisearch(request):
             return redirect('multisearch')
         
         player_names = player_names.split(',')
-
-        for player in player_names:
-            summoner_info = get_summoner(player, region)
-
+        
+        summoner_info_list_initial = get_multi_players_sync(player_names, region)
+        summoner_info_list = []
+        summoner_ids = []
+        for player, summoner_info in zip(player_names, summoner_info_list_initial):
             if not summoner_info:
                 messages.error(request, f"ERROR: {player} not found in {region} server")
-                continue
-            account_stats = get_account_stats(summoner_info['id'], region)
-            summoner_info_list.append(summoner_info)
-            account_stats_list.append(account_stats)
-        
+            else:
+                summoner_ids.append(summoner_info['id'])
+                summoner_info_list.append(summoner_info)
+        if summoner_ids:
+            account_stats_list = get_multi_accounts_sync(summoner_ids, region)
         if not summoner_info_list:
             messages.error(request, f"ERROR: No players found")
             return redirect('multisearch')
@@ -93,7 +91,7 @@ def player_stats(request, region, player_name):
         if request.GET.get('load_more'):
             if len(match_history) < matches:
                 matches -= len(match_history)
-                data2, match_history2, _, _, player_history2 = gather_data(player_name, region, matches, len(match_history))
+                data2, match_history2, _, _, player_history2 = gather_data_async(player_name, region, matches, len(match_history))
                 match_history = match_history + match_history2
                 player_history = player_history + player_history2
                 for key in data:
@@ -113,7 +111,7 @@ def player_stats(request, region, player_name):
     else:
         # Run helper function to gather needed data and store in session using base of 10 but if load more is in url load x more than 10
         if not request.GET.get('load_more'):
-            data, match_history, summoner_info, account_stats, player_history = gather_data(player_name, region, games)
+            data, match_history, summoner_info, account_stats, player_history = gather_data_async(player_name, region, games)
             request.session[player_name] = {
                 'data':data,
                 'match_history':match_history,
@@ -122,7 +120,7 @@ def player_stats(request, region, player_name):
                 'player_history':player_history,
             }
         else:
-            data, match_history, summoner_info, account_stats, player_history = gather_data(player_name, region, matches)
+            data, match_history, summoner_info, account_stats, player_history = gather_data_async(player_name, region, matches)
             request.session[player_name] = {
                 'data':data,
                 'match_history':match_history,

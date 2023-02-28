@@ -415,7 +415,8 @@ def get_live_game(summoner_name, region):
     except (KeyError, TypeError, ValueError):
         return None
 
-# CONSOLIDATION FUNCTION:
+
+# CONSOLIDATION FUNCTIONS:
 
 
 def gather_data(summoner_name, region, match_count, start = 0, queue_id = None):
@@ -506,11 +507,85 @@ async def get_match_data_async(match_id, region, session):
                 else:
                     time.sleep(int(response.headers['Retry-After']))
                     print(f"sleeping for {response.headers['Retry-After']} seconds")
+        response.raise_for_status()
     except Exception:
         return None
     else:
         return match_data
-    
+
+
+async def get_summoner_async(summoner_name, region, session):
+    """Look up summoner from inputed summoner name. returns ids used for making other api requests in addition to level and icon"""
+
+    # Set routing value from inputed region
+    region = platform_routing_values[region.upper()]
+
+    try:
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote_plus(summoner_name)}?api_key={api_key}"
+
+            async with session.get(url) as response:
+                if response.status != 429:
+                    summoner = await response.json()
+                    break
+                if not response.headers['Retry-After']:
+                    if attempts < 8:
+                        time.sleep(2 ** attempts)
+                        print(f"sleeping for {2 ** attempts} seconds")
+                        attempts += 1
+                    else:
+                        time.sleep(2 ** 7)
+                        print(f"sleeping for {2 ** 7} seconds")
+                else:
+                    time.sleep(int(response.headers['Retry-After']))
+                    print(f"sleeping for {response.headers['Retry-After']} seconds")
+        response.raise_for_status()
+    except Exception:
+        return None
+    else:
+        return summoner
+
+
+async def get_account_stats_async(id, region, session):
+    """Look up account stats from inputed summoner id. Returns data about account rank"""
+
+    # Set routing value from inputed region
+    region = platform_routing_values[region.upper()]
+
+    try:
+        attempts = 0
+        while True:
+            api_key = os.environ.get("API_KEY")
+            url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{id}?api_key={api_key}"
+            
+            async with session.get(url) as response:
+                if response.status != 429:
+                    account = await response.json()
+                    break
+                if not response.headers['Retry-After']:
+                    if attempts < 8:
+                        time.sleep(2 ** attempts)
+                        print(f"sleeping for {2 ** attempts} seconds")
+                        attempts += 1
+                    else:
+                        time.sleep(2 ** 7)
+                        print(f"sleeping for {2 ** 7} seconds")
+                else:
+                    time.sleep(int(response.headers['Retry-After']))
+                    print(f"sleeping for {response.headers['Retry-After']} seconds")
+        response.raise_for_status()
+    except Exception:
+        return None
+    else:
+        for queue in account:
+            queue['winrate'] = queue['wins']/(queue['wins']+queue['losses'])*100
+        return account
+
+
+# ASYNC TASK GATHERER:
+
 
 async def get_async_tasks(data_set, region, function):
     tasks = []
@@ -585,6 +660,19 @@ def gather_data_async(summoner_name, region, match_count, start = 0, queue_id = 
     return data, match_history, summoner_info, account_stats, player_history
 
 
-# IMPROVEMENTS:
-# Implement rate limit error handling into functions that call riot api
-# Implement multithreading/celery to send requests at once and improve loading times
+def get_multi_players_sync(player_names, region):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    future = asyncio.ensure_future(get_async_tasks(player_names, region, get_summoner_async))
+    loop.run_until_complete(future)
+    summoner_info_list = future.result()
+    return summoner_info_list
+
+
+def get_multi_accounts_sync(summoner_ids, region):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    future = asyncio.ensure_future(get_async_tasks(summoner_ids, region, get_account_stats_async))
+    loop.run_until_complete(future)
+    account_stats_list = future.result()
+    return account_stats_list
