@@ -4,7 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 from time import gmtime, strftime
-from .helpers import get_live_game, get_summoner, get_account_stats, gather_data_async, get_multi_players_sync, get_multi_accounts_sync
+from .helpers import get_live_game, get_summoner, get_account_stats, gather_data_async, get_multi_players_async, get_multi_accounts_async
 
 regions = ['BR', 'EUNE', 'EUW', 'JP', 'KR', 'LAN', 'LAS', 'NA', 'OCE', 'TR', 'RU']
 
@@ -13,6 +13,7 @@ games = 10;
 
 def main(request):
     return render(request, 'lolstats/main.html', {})
+
 
 def multisearch(request):
     if request.method == "POST":
@@ -28,7 +29,7 @@ def multisearch(request):
         
         player_names = player_names.split(',')
         
-        summoner_info_list_initial = get_multi_players_sync(player_names, region)
+        summoner_info_list_initial = get_multi_players_async(player_names, region)
         summoner_info_list = []
         summoner_ids = []
         for player, summoner_info in zip(player_names, summoner_info_list_initial):
@@ -38,7 +39,7 @@ def multisearch(request):
                 summoner_ids.append(summoner_info['id'])
                 summoner_info_list.append(summoner_info)
         if summoner_ids:
-            account_stats_list = get_multi_accounts_sync(summoner_ids, region)
+            account_stats_list = get_multi_accounts_async(summoner_ids, region)
         if not summoner_info_list:
             messages.error(request, f"ERROR: No players found")
             return redirect('multisearch')
@@ -46,6 +47,7 @@ def multisearch(request):
         return render(request, 'lolstats/multisearched.html', {'summoner_info_list':summoner_info_list, 'account_stats_list':account_stats_list, 'region':region})
     else:
         return render(request, 'lolstats/multisearch.html', {})
+
 
 def player(request):
 
@@ -62,6 +64,7 @@ def player(request):
         return redirect('main')
 
     return redirect('player_stats', region, player_name)
+
 
 def player_stats(request, region, player_name):
 
@@ -180,6 +183,7 @@ def player_stats(request, region, player_name):
     
     return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'item_dd':item_dd})
 
+
 def player_live(request, region, player_name):
 
     # Ensure region and summoner name are valid
@@ -203,13 +207,10 @@ def player_live(request, region, player_name):
     return render(request, 'lolstats/player_live.html', {'live_game_data':live_game_data, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'player_name':player_name})
 
 
-def test(request):
-    return render(request, 'lolstats/test.html', {})
-
-
 def view_404(request, exception=None):
     messages.error(request, "ERROR: 404 Not found")
     return redirect('main')
+
 
 def view_500(request, exception=None):
     messages.error(request, "ERROR: 500 Server issue")

@@ -660,7 +660,7 @@ def gather_data_async(summoner_name, region, match_count, start = 0, queue_id = 
     return data, match_history, summoner_info, account_stats, player_history
 
 
-def get_multi_players_sync(player_names, region):
+def get_multi_players_async(player_names, region):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     future = asyncio.ensure_future(get_async_tasks(player_names, region, get_summoner_async))
@@ -669,7 +669,7 @@ def get_multi_players_sync(player_names, region):
     return summoner_info_list
 
 
-def get_multi_accounts_sync(summoner_ids, region):
+def get_multi_accounts_async(summoner_ids, region):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     future = asyncio.ensure_future(get_async_tasks(summoner_ids, region, get_account_stats_async))
