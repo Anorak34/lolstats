@@ -32,7 +32,7 @@ Multisearch
     </div>
     <div class="mx-5">
         {% for summoner_info, account_stats in summoner_info_list|zip:account_stats_list %}
-        <a class="text-reset text-decoration-none" href="/player/{{ region }}/{{ summoner_info.name }}/">
+        <a class="text-reset text-decoration-none" href="/player/{{ region }}/{{ summoner_info.name }}/" onclick="loading()">
         <div class="p-3 rounded-3 override-left m-2 overflow-auto mx-5" style="background-color: #2c2f33;">
             <div class="container-fluid">
                 <p class="h1">{{summoner_info.name}} <span class="badge rounded-pill bg-secondary"
