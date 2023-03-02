@@ -171,7 +171,7 @@ Player stats
                 <span class="loss">LOSS</span>
             </div>
             {% endif %}
-            <div class="p-3 rounded-3 mb-1" style="background-color: #2c2f33;">
+            <div class="p-3 rounded-3 mb-1 ttwrapper" style="background-color: #2c2f33;">
                 <div class="row align-items-center flex-nowrap overflow-auto">
                     <div class="col-auto">
                         <div class="row align-items-center">
@@ -251,84 +251,72 @@ Player stats
                             <div class="col-auto">
                                 <div class="row justify-content-center">
                                     <div class="col-auto gx-1">
-                                        <div class="rounded-2 mb-1 overflow-hidden">
-                                            {% if player.item0 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item0}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item0 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item0}}.png&quot;);">
+                                            <span data-itemid="{{player.item0}}" class="tooltiptext tt-top-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-auto gx-1">
-                                        <div class="rounded-2 overflow-hidden">
-                                            {% if player.item3 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item3}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item3 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item3}}.png&quot;);">
+                                            <span data-itemid="{{player.item3}}" class="tooltiptext tt-bot-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="row justify-content-center">
                                     <div class="col-auto gx-1">
-                                        <div class="rounded-2 mb-1 overflow-hidden">
-                                            {% if player.item1 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item1}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item1 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item1}}.png&quot;);">
+                                            <span data-itemid="{{player.item1}}" class="tooltiptext tt-top-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-auto gx-1">
-                                        <div class="rounded-2 overflow-hidden">
-                                            {% if player.item4 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item4}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item4 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item4}}.png&quot;);">
+                                            <span data-itemid="{{player.item4}}" class="tooltiptext tt-bot-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="row justify-content-center">
                                     <div class="col-auto mb-1 gx-1">
-                                        <div class="rounded-2 overflow-hidden">
-                                            {% if player.item2 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item2}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item2 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item2}}.png&quot;);">
+                                            <span data-itemid="{{player.item2}}" class="tooltiptext tt-top-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2 mb-1" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-auto gx-1">
-                                        <div class="rounded-2 overflow-hidden">
-                                            {% if player.item5 != 0 %}
-                                            <img src="http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item5}}.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% else %}
-                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/gp_ui_placeholder.png"
-                                                alt="item icon" class="img-fluid" width="30px" height="30px">
-                                            {% endif %}
+                                        {% if player.item5 != 0 %}
+                                        <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 30px; height: 30px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{player.item5}}.png&quot;);">
+                                            <span data-itemid="{{player.item5}}" class="tooltiptext tt-bot-row"></span>
                                         </div>
+                                        {% else %}
+                                        <div class="bg-cover bg-center rounded-2" style="width: 30px; height: 30px; background-color: #2c2f33;"></div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -463,244 +451,270 @@ Player stats
                 </div>
             </div>
             <div class="collapse" id="collapseGame{{ forloop.counter }}">
-                <div class="card card-body p-3 rounded-3 mb-1 overflow-auto justify-content-center" style="background-color: #2c2f33;">
-                    <div class="mt-3">
-                        <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
-                            <thead>
-                                <tr>
-                                    {% if match.info.teams.0.win %}
-                                    <th class="override-left" scope="col">Ally Team - <span class="win">VICTORY</span</th>
-                                    {% else %}
-                                    <th class="override-left" scope="col">Ally Team</th>
-                                    {% endif %}
-                                    <th scope="col">LVL</th>
-                                    <th scope="col">K</th>
-                                    <th scope="col">D</th>
-                                    <th scope="col">A</th>
-                                    <th scope="col">CS</th>
-                                    <th scope="col">VS</th>
-                                    <th scope="col">GOLD</th>
-                                    <th scope="col">DMG CHAMP</th>
-                                    <th scope="col">DMG OBJ</th>
-                                    <th scope="col">DMG TAKEN</th>
-                                    <th scope="col">KP</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider">
-                                {% for participant in match.info.participants|split:1 %}
-                                <tr>
-                                    <td>
-                                        <div class="row align-items-center justify-content-left px-2 flex-nowrap">
-                                            <div class="col-auto gx-1">
-                                                {% if player.teamPosition %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
-                                                {% endif %}
+                <div class="card card-body p-3 rounded-3 mb-1 justify-content-center" style="background-color: #2c2f33;">
+                    <div class="overflow-auto">
+                        <div class="mt-3">
+                            <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
+                                <thead>
+                                    <tr>
+                                        {% if match.info.teams.0.win %}
+                                        <th class="override-left" scope="col">Ally Team - <span class="win">VICTORY</span></th>
+                                        {% else %}
+                                        <th class="override-left" scope="col">Ally Team</th>
+                                        {% endif %}
+                                        <th scope="col">LVL</th>
+                                        <th scope="col">K</th>
+                                        <th scope="col">D</th>
+                                        <th scope="col">A</th>
+                                        <th scope="col">CS</th>
+                                        <th scope="col">VS</th>
+                                        <th scope="col">GOLD</th>
+                                        <th scope="col">DMG CHAMP</th>
+                                        <th scope="col">DMG OBJ</th>
+                                        <th scope="col">DMG TAKEN</th>
+                                        <th scope="col">KP</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                    {% for participant in match.info.participants|split:1 %}
+                                    <tr>
+                                        <td>
+                                            <div class="row align-items-center justify-content-left px-2 flex-nowrap">
+                                                <div class="col-auto gx-1">
+                                                    {% if player.teamPosition %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    {% if participant.summoner1 %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                    {% endif %}
+                                                    {% if participant.summoner2 %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
+                                                </div>
+                                                <div class="col-auto gx-2 override-left" style="width: 80px;">
+                                                    <div class="h7 text-truncate">{{participant.summonerName}}</div>
+                                                    <div class="h8 text-truncate">{{participant.championName}}</div>
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item0 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item0}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item1 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item1}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item2 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item2}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item3 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item3}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item4 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item4}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item5 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item5}}" class="tooltiptext tt-team1"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
                                             </div>
-                                            <div class="col-auto gx-1">
-                                                <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
-                                            </div>
-                                            <div class="col-auto gx-1">
-                                                {% if participant.summoner1 %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
-                                                {% endif %}
-                                                {% if participant.summoner2 %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-1">
-                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
-                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
-                                            </div>
-                                            <div class="col-auto gx-2 override-left" style="width: 80px;">
-                                                <div class="h7 text-truncate">{{participant.summonerName}}</div>
-                                                <div class="h8 text-truncate">{{participant.championName}}</div>
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item0 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item1 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item2 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item3 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item4 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item5 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{participant.champLevel}}</td>
-                                    <td>{{participant.kills}}</td>
-                                    <td>{{participant.deaths}}</td>
-                                    <td>{{participant.assists}}</td>
-                                    <td>{{participant.totalMinionsKilled}}</td>
-                                    <td>{{participant.visionScore}}</td>
-                                    <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
-                                    <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
-                                    <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
-                                    <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
-                                    <td>{{participant.kills|add:participant.assists|percent:match.info.teams.0.objectives.champion.kills|floatformat}}%</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="text-center mb-3 h6">
-                        <div class="mb-1">
-                            ALLIED TEAM: <span class="win">{{match.info.teams.0.objectives.champion.kills}}</span> KILLS | <span class="win">{{match.info.teams.0.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="win">{{match.info.teams.0.objectives.tower.kills}}</span> TOWERS | <span class="win">{{match.info.teams.0.objectives.dragon.kills}}</span> DRAGONS | <span class="win">{{match.info.teams.0.objectives.baron.kills}}</span> BARONS
+                                        </td>
+                                        <td>{{participant.champLevel}}</td>
+                                        <td>{{participant.kills}}</td>
+                                        <td>{{participant.deaths}}</td>
+                                        <td>{{participant.assists}}</td>
+                                        <td>{{participant.totalMinionsKilled}}</td>
+                                        <td>{{participant.visionScore}}</td>
+                                        <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
+                                        <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
+                                        <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
+                                        <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
+                                        <td>{{participant.kills|add:participant.assists|percent:match.info.teams.0.objectives.champion.kills|floatformat}}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mb-3 h6">
+                            <div class="mb-1">
+                                ALLIED TEAM: <span class="win">{{match.info.teams.0.objectives.champion.kills}}</span> KILLS | <span class="win">{{match.info.teams.0.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="win">{{match.info.teams.0.objectives.tower.kills}}</span> TOWERS | <span class="win">{{match.info.teams.0.objectives.dragon.kills}}</span> DRAGONS | <span class="win">{{match.info.teams.0.objectives.baron.kills}}</span> BARONS
+                            </div>
+                            <div>
+                                ENEMY TEAM: <span class="loss">{{match.info.teams.1.objectives.champion.kills}}</span> KILLS | <span class="loss">{{match.info.teams.1.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="loss">{{match.info.teams.1.objectives.tower.kills}}</span> TOWERS | <span class="loss">{{match.info.teams.1.objectives.dragon.kills}}</span> DRAGONS | <span class="loss">{{match.info.teams.1.objectives.baron.kills}}</span> BARONS
+                            </div>
                         </div>
                         <div>
-                            ENEMY TEAM: <span class="loss">{{match.info.teams.1.objectives.champion.kills}}</span> KILLS | <span class="loss">{{match.info.teams.1.objectives.gold|div:1000|floatformat}}k</span> GOLD | <span class="loss">{{match.info.teams.1.objectives.tower.kills}}</span> TOWERS | <span class="loss">{{match.info.teams.1.objectives.dragon.kills}}</span> DRAGONS | <span class="loss">{{match.info.teams.1.objectives.baron.kills}}</span> BARONS
+                            <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
+                                <thead>
+                                    <tr>
+                                        {% if match.info.teams.1.win %}
+                                        <th class="override-left" scope="col">Enemy Team - <span class="loss">VICTORY</span></th>
+                                        {% else %}
+                                        <th class="override-left" scope="col">Enemy Team</th>
+                                        {% endif %}
+                                        <th scope="col">LVL</th>
+                                        <th scope="col">K</th>
+                                        <th scope="col">D</th>
+                                        <th scope="col">A</th>
+                                        <th scope="col">CS</th>
+                                        <th scope="col">VS</th>
+                                        <th scope="col">GOLD</th>
+                                        <th scope="col">DMG CHAMP</th>
+                                        <th scope="col">DMG OBJ</th>
+                                        <th scope="col">DMG TAKEN</th>
+                                        <th scope="col">KP</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                    {% for participant in match.info.participants|split:2 %}
+                                    <tr>
+                                        <td>
+                                            <div class="row align-items-center justify-content-left px-2 flex-nowrap">
+                                                <div class="col-auto gx-1">
+                                                    {% if player.teamPosition %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    {% if participant.summoner1 %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                    {% endif %}
+                                                    {% if participant.summoner2 %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-1">
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
+                                                </div>
+                                                <div class="col-auto gx-2 override-left" style="width: 80px;">
+                                                    <div class="h7 text-truncate">{{participant.summonerName}}</div>
+                                                    <div class="h8 text-truncate">{{participant.championName}}</div>
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item0 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item0}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item1 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item1}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item2 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item2}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item3 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item3}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item4 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item4}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto gx-0">
+                                                    {% if participant.item5 != 0 %}
+                                                    <div class="bg-cover bg-center rounded-2 mytooltip" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);">
+                                                        <span data-itemid="{{participant.item5}}" class="tooltiptext tt-team2"></span>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{participant.champLevel}}</td>
+                                        <td>{{participant.kills}}</td>
+                                        <td>{{participant.deaths}}</td>
+                                        <td>{{participant.assists}}</td>
+                                        <td>{{participant.totalMinionsKilled}}</td>
+                                        <td>{{participant.visionScore}}</td>
+                                        <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
+                                        <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
+                                        <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
+                                        <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
+                                        <td>{{participant.kills|add:participant.assists|percent:match.info.teams.1.objectives.champion.kills|floatformat}}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <div>
-                        <table class="table table-sm table-hover table-dark table-bordered w-100 text-center">
-                            <thead>
-                                <tr>
-                                    {% if match.info.teams.1.win %}
-                                    <th class="override-left" scope="col">Enemy Team - <span class="loss">VICTORY</span></th>
-                                    {% else %}
-                                    <th class="override-left" scope="col">Enemy Team</th>
-                                    {% endif %}
-                                    <th scope="col">LVL</th>
-                                    <th scope="col">K</th>
-                                    <th scope="col">D</th>
-                                    <th scope="col">A</th>
-                                    <th scope="col">CS</th>
-                                    <th scope="col">VS</th>
-                                    <th scope="col">GOLD</th>
-                                    <th scope="col">DMG CHAMP</th>
-                                    <th scope="col">DMG OBJ</th>
-                                    <th scope="col">DMG TAKEN</th>
-                                    <th scope="col">KP</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider">
-                                {% for participant in match.info.participants|split:2 %}
-                                <tr>
-                                    <td>
-                                        <div class="row align-items-center justify-content-left px-2 flex-nowrap">
-                                            <div class="col-auto gx-1">
-                                                {% if player.teamPosition %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 20px; height: 20px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-{{participant.teamPosition|lower}}-blue-hover.png&quot;);"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-1">
-                                                <div class="bg-cover bg-center rounded-5" style="width: 30px; height: 30px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{participant.championId}}.png&quot;);"></div>
-                                            </div>
-                                            <div class="col-auto gx-1">
-                                                {% if participant.summoner1 %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner1}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px;  background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
-                                                {% endif %}
-                                                {% if participant.summoner2 %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/spell/{{participant.summoner2}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-1" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_empty.png&quot;);"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-1">
-                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.keystone}}&quot;);"></div>
-                                                <div class="bg-cover bg-center rounded-2" style="width: 15px; height: 15px; background-image: url(&quot;https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/{{participant.substyle}}&quot;);"></div>
-                                            </div>
-                                            <div class="col-auto gx-2 override-left" style="width: 80px;">
-                                                <div class="h7 text-truncate">{{participant.summonerName}}</div>
-                                                <div class="h8 text-truncate">{{participant.championName}}</div>
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item0 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item0}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item1 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item1}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item2 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item2}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item3 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item3}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item4 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item4}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-auto gx-0">
-                                                {% if participant.item5 != 0 %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-image: url(&quot;http://ddragon.leagueoflegends.com/cdn/13.4.1/img/item/{{participant.item5}}.png&quot;);"></div>
-                                                {% else %}
-                                                <div class="bg-cover bg-center rounded-2" style="width: 20px; height: 20px; background-color: #2c2f33;"></div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{participant.champLevel}}</td>
-                                    <td>{{participant.kills}}</td>
-                                    <td>{{participant.deaths}}</td>
-                                    <td>{{participant.assists}}</td>
-                                    <td>{{participant.totalMinionsKilled}}</td>
-                                    <td>{{participant.visionScore}}</td>
-                                    <td>{{participant.goldEarned|div:1000|floatformat}}k</td>
-                                    <td>{{participant.totalDamageDealtToChampions|div:1000|floatformat}}k</td>
-                                    <td>{{participant.damageDealtToObjectives|div:1000|floatformat}}k</td>
-                                    <td>{{participant.totalDamageTaken|div:1000|floatformat}}k</td>
-                                    <td>{{participant.kills|add:participant.assists|percent:match.info.teams.1.objectives.champion.kills|floatformat}}%</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -713,7 +727,9 @@ Player stats
             </form>
         </div>
     </div>
+    {{ item_dd|json_script:"item_dd" }}
     {{ queue_ids|json_script:"queue_ids" }}
+    <script src="\static\js\item_tt.js"></script>
     <script src="\static\js\account_colours.js"></script>
     <script src="\static\js\queue_ids.js"></script>
     {% endblock %}

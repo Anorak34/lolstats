@@ -22,3 +22,4 @@ urlpatterns = [
 ]
 
 handler404 = 'lolstats.views.view_404'
+handler500 = 'lolstats.views.view_500'

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import json
 import numpy as np
 import pandas as pd
 from time import gmtime, strftime
@@ -172,8 +173,12 @@ def player_stats(request, region, player_name):
         'winrate':str(round(queue_df['win'].sum() / (queue_df['win'].sum() + queue_df['loss'].sum())*100, 2)) + '%',
         'number_of_games':len(data['champion'])
     }
+
+    # Item data needed for JS
+    with open('lolstats/static/json/items_dd_alt.json', 'r', encoding='utf-8') as file:
+        item_dd = json.load(file)
     
-    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region})
+    return render(request, 'lolstats/player_stats.html', {'champ_df':champ_df, 'player_stats_df':player_stats_df, 'queue_df':queue_df, 'global_winrate':global_winrate, 'match_history':match_history, 'player_history':player_history, 'summoner_info':summoner_info, 'account_stats':account_stats, 'region':region, 'item_dd':item_dd})
 
 def player_live(request, region, player_name):
 
@@ -199,9 +204,18 @@ def player_live(request, region, player_name):
 
 
 def test(request):
+    summoner_info = get_summoner('anorak34', 'euw')
+    print(1)
+    summoner_info = None
+    print(2)
+    account_stats = get_account_stats(summoner_info['id'], 'euw')
     return render(request, 'lolstats/test.html', {})
 
 
 def view_404(request, exception=None):
     messages.error(request, "ERROR: 404 Not found")
+    return redirect('main')
+
+def view_500(request, exception=None):
+    messages.error(request, "ERROR: 500 Server issue")
     return redirect('main')

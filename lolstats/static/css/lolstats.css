@@ -107,3 +107,64 @@ body::-webkit-scrollbar, body::-webkit-scrollbar-track {
 .ban-img {
     filter: grayscale(100%);
 }
+
+.ttwrapper {
+    position: relative;
+}
+
+.mytooltip {
+    position: static;
+}
+
+.tt-top-row {
+    top: 50%;
+    left: 50%;
+}
+
+.tt-bot-row {
+    top: 72%;
+    left: 50%;
+}
+
+.tt-team1 {
+    top: 12%;
+    left: 60%;
+}
+
+.tt-team2 {
+    top: 62%;
+    left: 60%;
+}
+
+.mytooltip .tooltiptext {
+    visibility: hidden;
+    width: fit-content;
+    max-width: 400px;
+    background-color: #212121;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: smaller;
+    position: absolute;
+    z-index: 5;
+    margin-left: -200px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.mytooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.item-name {
+    font-size: medium;
+    font-weight: 500;
+}
+
+.item-price {
+    font-size: small;
+    font-weight: 500;
+    color: #f3a05a;
+}
