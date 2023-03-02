@@ -213,7 +213,11 @@ Player Live
         {% endif %}
     </div>
 </div>
+<div id="loading-ani" class="load-container load load-over-content mx-auto hide">
+    <div class="loader"></div>
+</div>
 {{ live_game_data.gameLength|json_script:"gameLength" }}
 <script src="\static\js\timer.js"></script>
 <script src="\static\js\account_colours.js"></script>
+<script src="\static\js\load_ani.js"></script>
 {% endblock %}

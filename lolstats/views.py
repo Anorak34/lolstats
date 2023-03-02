@@ -204,11 +204,6 @@ def player_live(request, region, player_name):
 
 
 def test(request):
-    summoner_info = get_summoner('anorak34', 'euw')
-    print(1)
-    summoner_info = None
-    print(2)
-    account_stats = get_account_stats(summoner_info['id'], 'euw')
     return render(request, 'lolstats/test.html', {})
 
 

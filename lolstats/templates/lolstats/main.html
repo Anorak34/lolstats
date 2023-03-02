@@ -11,7 +11,7 @@ Main
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">Search for a Summoner {% include './icons/search.svg' %}</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET">
+            <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET" onsubmit="loading()">
                 <select class="form-select mx-auto w-auto" id="region" name="region">
                     {% for region in regions %}
                     <option value="{{ region }}">{{ region }}</option>
@@ -24,4 +24,8 @@ Main
         </div>
     </div>
 </div>
+<div id="loading-ani" class="load-container load mx-auto hide">
+    <div class="loader"></div>
+</div>
+<script src="\static\js\load_ani.js"></script>
 {% endblock %}

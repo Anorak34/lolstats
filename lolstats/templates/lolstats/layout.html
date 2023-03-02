@@ -34,7 +34,7 @@
                         <a class="nav-link" href="/multisearch">Multisearch</a>
                       </li>
                   </ul>
-                  <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET">
+                  <form class="d-flex mt-3 mt-lg-0" action={% url 'player' %} method="GET" onsubmit="loading()">
                         <select class="form-select mx-auto w-auto" id="region" name="region">
                             {% for region in regions %}
                                 <option value="{{ region }}">{{ region }}</option>

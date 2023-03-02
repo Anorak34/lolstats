@@ -12,7 +12,7 @@ Multisearch
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">Search for Summoners {% include './icons/search.svg' %}</p>
         <div class="mx-auto" style="max-width: 400px;">
-            <form class="mt-3 mt-lg-0" action={% url 'multisearch' %} method="POST">
+            <form class="mt-3 mt-lg-0" action={% url 'multisearch' %} method="POST" onsubmit="loading()">
                 {% csrf_token %}
                 <textarea autocomplete="off" class="form-control me-2" id="player_names" name="player_names"
                     placeholder="Search Players" required type="text" rows="3"></textarea>
@@ -31,4 +31,8 @@ Multisearch
                 summoner1,summoner2,summoner3,etc...</strong></p>
     </div>
 </div>
+<div id="loading-ani" class="load-container load mx-auto hide">
+    <div class="loader"></div>
+</div>
+<script src="\static\js\load_ani.js"></script>
 {% endblock %}
