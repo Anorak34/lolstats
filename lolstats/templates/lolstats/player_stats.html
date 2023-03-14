@@ -9,22 +9,22 @@ Player stats
 <div class="container-xxl py-4">
     <div class="p-3 rounded-3">
         <div class="container-fluid">
-            <p class="h1">{{summoner_info.name}} <span class="badge rounded-pill bg-secondary"
-                    style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
+            <p class="h1">{{player_data.summoner_info.name}} <span class="badge rounded-pill bg-secondary"
+                    style="font-size:1rem;">Lvl {{player_data.summoner_info.summonerLevel}}</span></p>
             <div class="row mb-auto text-left align-items-center flex-nowrap">
                 <div class="col-md-2" style="max-height: 120px; max-width: 120px;">
                     <div class="rounded-5 border border-3 w-auto h-auto overflow-hidden">
-                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{summoner_info.profileIconId}}.png"
+                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{player_data.summoner_info.profileIconId}}.png"
                             alt="summoner icon" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-10">
                     <div class="row flex-nowrap">
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">UNRANKED</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for queue in player_data.account_stats %}
                             {% if queue.tier == 'CHALLENGER' or queue.tier == 'MASTER' or queue.tier == 'GRANDMASTER' %}
                             <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"></span>
                                 {{queue.leaguePoints}}LP</p>
@@ -36,19 +36,19 @@ Player stats
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">RANKED_SOLO_5x5</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for queue in player_data.account_stats %}
                             <p class="h6">{{queue.queueType}}</p>
                             {% endfor %}
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">W/L 0-0 WINRATE 0%</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for queue in player_data.account_stats %}
                             <p class="h6">W/L <span class="win">{{queue.wins}}</span>-<span
                                     class="loss">{{queue.losses}}</span> WINRATE <span
                                     class="winrate">{{queue.winrate|floatformat:1}}%</span></p>
@@ -75,13 +75,13 @@ Player stats
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    {% for col in champ_df.columns %}
+                                    {% for col in player_stats.champ_df.columns %}
                                     <th scope="col">{{ col|upper }}</th>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row in champ_df.values %}
+                                {% for row in player_stats.champ_df.values %}
                                 <tr>
                                     <th scope="col">{{forloop.counter}}</th>
                                     {% for value in row %}
@@ -101,13 +101,13 @@ Player stats
                             <thead>
                                 <tr>
                                     <th scope="col">STAT</th>
-                                    {% for col in player_stats_df.columns %}
+                                    {% for col in player_stats.player_stats_df.columns %}
                                     <th scope="col">{{ col|upper }}</th>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row, stat in player_stats_df.values|zip:player_stats_df.index %}
+                                {% for row, stat in player_stats.player_stats_df.values|zip:player_stats.player_stats_df.index %}
                                 <tr>
                                     <td>{{ stat|upper }}</td>
                                     {% for value in row %}
@@ -130,13 +130,13 @@ Player stats
                         <table class="table table-sm table-hover table-dark table-striped w-100">
                             <thead>
                                 <tr>
-                                    {% for col in queue_df.columns %}
+                                    {% for col in player_stats.queue_df.columns %}
                                     <th scope="col">{{ col|upper }}</th>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row in queue_df.values %}
+                                {% for row in player_stats.queue_df.values %}
                                 <tr>
                                     {% for value in row %}
                                     {% if forloop.counter == 1 %}
@@ -152,16 +152,16 @@ Player stats
                     </div>
                 </div>
                 <div>
-                    <p class="h4"><span class="winrate">{{ global_winrate.winrate }}</span> | <span
-                            class="win">{{global_winrate.win}}</span> - <span
-                            class="loss">{{global_winrate.loss}}</span></p>
+                    <p class="h4"><span class="winrate">{{ player_stats.global_winrate.winrate }}</span> | <span
+                            class="win">{{player_stats.global_winrate.win}}</span> - <span
+                            class="loss">{{player_stats.global_winrate.loss}}</span></p>
                     <p class="h6">Global Record</p>
-                    <p>Stats based on <span class="h6">{{ global_winrate.number_of_games }}</span> games</p>
+                    <p>Stats based on <span class="h6">{{ player_stats.global_winrate.number_of_games }}</span> games</p>
                 </div>
             </div>
         </div>
         <div class="col-md-8">
-            {% for match, player in match_history|zip:player_history %}
+            {% for match, player in player_data.match_history|zip:player_data.player_history %}
             {% if player.win %}
             <div class="h5 text-left">{{player.championName}} - <span class="queue">{{match.info.queueId}}</span> :
                 <span class="win">WIN</span>
@@ -437,7 +437,11 @@ Player stats
                     </div>
                     <div class="col-auto mx-1">
                         <div class="row justify-content-center">{% include './icons/stopwatch-fill.svg' %}</div>
+                        {% if match.info.gameEndTimestamp %}
                         <div class="row justify-content-center h6">{{match.info.gameDuration|time}}</div>
+                        {% else %}
+                        <div class="row justify-content-center h6">{{match.info.gameDuration|timeMS}}</div>
+                        {% endif %}
                         <div class="row justify-content-center h7">{{match.info.gameCreation}}</div>
                         <div class="row justify-content-center w-75 mt-1 mx-1">
                             <button type="button" class="btn btn-outline-light btn-sm"

@@ -26,6 +26,15 @@ def time(a):
     return f'{m}m{s}s'
   return f'{h}h{m}m{s}s'
 
+@register.filter(name='timeMS')
+def time_ms(a):
+  a = round(a/1000)
+  m, s = divmod(a, 60)
+  h, m = divmod(m, 60)
+  if h == 0:
+    return f'{m}m{s}s'
+  return f'{h}h{m}m{s}s'
+
 @register.filter(name='range')
 def template_range(a, b):
   return range(a, b)

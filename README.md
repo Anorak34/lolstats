@@ -1,5 +1,5 @@
 # LOLSTATS
-#### Video Demo:  <URL HERE>
+#### Video Demo:  <https://youtu.be/pvS_FtKPcZA>
 #### Description:
 This project is a statistics website for league of legends built using Django. It uses the RIOT API for data.
 

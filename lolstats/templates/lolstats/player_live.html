@@ -9,22 +9,22 @@ Player Live
 <div class="container-xxl py-4">
     <div class="p-3 rounded-3">
         <div class="container-fluid">
-            <p class="h1">{{summoner_info.name}} <span class="badge rounded-pill bg-secondary"
-                    style="font-size:1rem;">Lvl {{summoner_info.summonerLevel}}</span></p>
+            <p class="h1">{{player_data.summoner_info.name}} <span class="badge rounded-pill bg-secondary"
+                    style="font-size:1rem;">Lvl {{player_data.summoner_info.summonerLevel}}</span></p>
             <div class="row mb-auto text-left align-items-center flex-nowrap">
                 <div class="col-md-2" style="max-height: 120px; max-width: 120px;">
                     <div class="rounded-5 border border-3 w-auto h-auto overflow-hidden">
-                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{summoner_info.profileIconId}}.png"
+                        <img src="http://ddragon.leagueoflegends.com/cdn/13.3.1/img/profileicon/{{player_data.summoner_info.profileIconId}}.png"
                             alt="summoner icon" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-10">
                     <div class="row flex-nowrap">
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">UNRANKED</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for queue in player_data.account_stats %}
                             {% if queue.tier == 'CHALLENGER' or queue.tier == 'MASTER' or queue.tier == 'GRANDMASTER' %}
                             <p class="h6"><span class="tier">{{queue.tier}}</span><span class="rank"></span>
                                 {{queue.leaguePoints}}LP</p>
@@ -36,19 +36,19 @@ Player Live
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">RANKED_SOLO_5x5</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for queue in player_data.account_stats %}
                             <p class="h6">{{queue.queueType}}</p>
                             {% endfor %}
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if not account_stats %}
+                            {% if not player_data.account_stats %}
                             <p class="h6">W/L 0-0 WINRATE 0%</p>
                             {% else %}
-                            {% for queue in account_stats %}
+                            {% for player_data.queue in account_stats %}
                             <p class="h6">W/L <span class="win">{{queue.wins}}</span>-<span
                                     class="loss">{{queue.losses}}</span> WINRATE <span
                                     class="winrate">{{queue.winrate|floatformat:1}}%</span></p>
@@ -65,10 +65,10 @@ Player Live
         <a class="nav-link active text-light-emphasis" aria-current="page" href="{{ request.path }}">Live Game</a>
     </nav>
     <div class="container p-3 mt-5">
-        {% if not live_game_data %}
+        {% if not player_data.live_game_data %}
         <p class="display-2 text-center mt-5">PLAYER NOT IN GAME</p>
         {% else %}
-        <div class="h3">{{live_game_data.gameMode}} - <span id="timer"></span></div>
+        <div class="h3">{{player_data.live_game_data.gameMode}} - <span id="timer"></span></div>
         <table class="table table-hover table-dark table-striped table-borderless w-100 text-center">
             <thead>
                 <tr>
@@ -78,7 +78,7 @@ Player Live
                 </tr>
             </thead>
             <tbody class="table-group-divider">
-                {% for blue, red in live_game_data.participants|splitZip %}
+                {% for blue, red in player_data.live_game_data.participants|splitZip %}
                 <tr>
                     <td>
                         <div class="row align-items-center justify-content-start px-2 flex-nowrap">
@@ -182,7 +182,7 @@ Player Live
                 <tr>
                     <td>
                         <div class="row align-items-center justify-content-start px-2 flex-nowrap">
-                            {% for champ in live_game_data.bannedChampions|split:1 %}
+                            {% for champ in player_data.live_game_data.bannedChampions|split:1 %}
                             <div class="col-auto gx-3">
                                 <div class="border border-3 rounded-circle border-info overflow-hidden">
                                     <div class="bg-cover bg-center ban-img"
@@ -196,7 +196,7 @@ Player Live
                     <td class="h5"><div class="mt-2">-BANS-</div></td>
                     <td>
                         <div class="row align-items-center justify-content-end px-2 flex-nowrap">
-                            {% for champ in live_game_data.bannedChampions|split:2 %}
+                            {% for champ in player_data.live_game_data.bannedChampions|split:2 %}
                             <div class="col-auto gx-3">
                                 <div class="border border-3 rounded-circle border-danger overflow-hidden">
                                     <div class="bg-cover bg-center ban-img"
@@ -216,7 +216,7 @@ Player Live
 <div id="loading-ani" class="load-container load load-over-content mx-auto hide">
     <div class="loader"></div>
 </div>
-{{ live_game_data.gameLength|json_script:"gameLength" }}
+{{ player_data.live_game_data.gameLength|json_script:"gameLength" }}
 <script src="\static\js\timer.js"></script>
 <script src="\static\js\account_colours.js"></script>
 <script src="\static\js\load_ani.js"></script>
