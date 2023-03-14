@@ -1,5 +1,4 @@
 # LOLSTATS
-#### Video Demo:  <https://youtu.be/pvS_FtKPcZA>
 #### Description:
 This project is a statistics website for league of legends built using Django. It uses the RIOT API for data.
 
@@ -9,13 +8,14 @@ It has 3 main pages:
 3. Multisearch: This page allows you to search for multiple summoners at once. A user should enter the region via the dropdown and the enter a series of player names in the input box separated by commas. Submitting this will display a list of the valid summoners out of those searched, this list contains data like the players rank in different queues, each item in the list serves as a link to their specific player stats page.
 
 Overview of important files:
-1. urls.py: contains all valid urls for the site
-2. views.py: contains logic for each page (further detail below)
-3. helpers.py: contains helper functions for supporting the sites logic, these are mostly functions that all the RIOT API (further detail below)
-4. context_processors.py: serves regions and queueids to all pages
-5. templates: contains the html for each URL
-6. templatetags: here I have created my own templates for use in the site's html, this includes implementing functionality like zip and changing time in seconds to hh:mm:ss
-7. static: this contains my static files, including CSS, JavaScript and JSON. The json is json data from riot regarding items, runes and spells, this is needed because the player data from the API represents item, spell and rune data with ids and I need the json as a reference so that I can find images and descriptions for these. (Further detail of the JavaScript below)
+1. [urls.py](lolstats/urls.py): contains all valid urls for the site
+2. [stats.py](lolstats/stats.py): contains logic for each page (further detail below)
+3. [views.py](lolstats/views.py): processes logic for each page
+4. [utilities](lolstats/utilities): folder containing two modules, one contains logic for interacting with the riot api and the other contains logic for processing data from riot (further detail below)
+5. [context_processors.py](lolstats/context_processors.py): serves regions and queueids to all pages
+6. [templates](lolstats/lolstats/templates/lolstats/): contains the html for each URL
+7. [templatetags](lolstats/templatetags): here I have created my own templates for use in the site's html, this includes implementing functionality like zip and changing time in seconds to hh:mm:ss
+8. [static](lolstats/static): this contains my static files, including CSS, JavaScript and JSON. The json is json data from riot regarding items, runes and spells, this is needed because the player data from the API represents item, spell and rune data with ids and I need the json as a reference so that I can find images and descriptions for these. (Further detail of the JavaScript below)
 
 JAVASCRIPT DETAILS:
 I have 5 JavaScript files in this project:
@@ -25,13 +25,13 @@ I have 5 JavaScript files in this project:
 4. queue_ids.js: in some pages queue ids are displayed, this changes them to be that corresponding queues name
 5. timer.js: this creates a game timer for the live game data
 
-HELPERS.PY DETAILS:
-Helpers.py contains 4 main types of function that are used throughout the site:
+UTILITIES DETAILS:
+The two modules in here contain 3 main types of function that are used throughout the site's buissness logic (mostly in stats.py):
 1. data manipulation functions: the data from the API must be altered in places to make it more usable, these functions do thinks like: sort the participants in data from a match, add the whole teams total gold to match data, convert summoner ids to their names, identify the searched player within match data and convert the UNIX timestamp for when the game was made into a date
 2. API call functions: these get data from the riot APIs, there are many APIs and to use some you need data from others so there are several of these. Each of them handles errors by returning None and handle rate limiting by sleeping if a 429 error is returned. When 429 is returned the API should tell you how long you need to wait, the functions will sleep for this time if told but if that data is missing it will simply back off exponentially up to 2mins.
 3. ASYNC API call functions: These are the same as normal API functions but are async, these are for functions that are called many times per URL like match data in the player stats page. These massively increase the speed of the server heavy tasks in Multisearch and player stats.
-4. Consolidation function: This gathers all the data needed for player stats from the various APIs, it also uses the data functions to make them usable and creates a dictionary for the specific data of the searched player needed for the stats sections
 
-VIEWS.PY DETAILS:
-Here is the logic for each URL, in each if there is user input it is first validated before data is gathered from the APIs. There are also handlers for 404 and 500 errors here. If the system finds an error (user input, 404 or 500) the user is appropriately redirected, and an error notification is flashed.
-player stats page: this view is more complex as it has several extra tasks compared to other views. After data is called it is stored in cache, before data is called the cache is checked for the data we want and if present that is used rather than calling the APIs again which increases speed vastly. The cache data before it is used has be checked to make sure there is the amount we need, meaning if there is not enough data, we get the extra data needed from APIs and append it, or if there is too much we cut it down and only send what is necessary to the template. This view also uses pandas to calculate player stats from the raw data.
+STATS.PY DETAILS:
+Here is the logic for each URL, in each if there is user input it is first validated before data is gathered from the APIs. If the system finds an error (user input, 404 or 500) the user is appropriately redirected, and an error notification is flashed.
+player_data: After data is called it is stored in cache, before data is called the cache is checked for the data we want and if present that is used rather than calling the APIs again which increases speed vastly. The cache data before it is used has be checked to make sure there is the amount we need, meaning if there is not enough data, we get the extra data needed from APIs and append it, or if there is too much we cut it down and only send what is necessary to the template. 
+player_stats: This function uses pandas to calculate player stats from the raw data.
