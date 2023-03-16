@@ -1,6 +1,6 @@
 # LOLSTATS
 #### Description:
-This project is a statistics website for league of legends built using Django. It uses the RIOT API for data.
+This project is a statistics website for league of legends built using Django. It uses the RIOT API for data, if you want to use this app you can sign up for a free account for the api at [Riot Developer Portal](https://developer.riotgames.com/).
 
 It has 3 main pages:
 1. Main/title page: This page shows the general title and purpose for the website i.e., search for a summoner. There is also a search box here with a dropdown, the dropdown contains all the games regions, a user should enter the region of the player they are interested in and then enter their name in the search box. Submitting this will send you to the player stats page.
